@@ -1,0 +1,106 @@
+body {
+    margin: 0;
+    background-color: rgb(36, 36, 46);
+}
+
+* {
+    font-size: 1.125rem;
+    color: #FFF;
+    font-family: "PT Serif";
+    font-weight: 400;
+}
+
+.logo {
+    height: 100px;
+    width: auto;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+}
+
+article { 
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+h1, h2 {
+    position: relative;
+    font-family: Roboto;
+    font-weight: 300;
+    text-transform: uppercase;
+    margin: 3rem 0 1rem 0;
+}
+h1 { font-size: 2.5rem; }
+h2 { font-size: 1.75rem; }
+
+section {
+    max-width: 600px;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-bottom: 2rem;
+}
+.inline-table {
+    max-width: 700px;
+    margin-top: 1rem;
+    margin-left: -90px;
+}
+th { 
+    background-color: #FFF;
+    color: rgb(36, 36, 46);
+    font-weight: bold;
+    text-align: left;
+}
+td, th { 
+    padding: 10px 20px;
+}
+tbody tr:not(.table-section) { background-color: transparent; }
+tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.1); }
+td.icon-column { 
+    text-align: center;
+    padding: 10px;
+}
+td:nth-child(4),
+th:nth-child(4),
+td:nth-child(3),
+th:nth-child(3),
+.total-row td { text-align: right; }
+
+.total-row td { font-weight: bold; }
+
+.total-row td:nth-child(2) { 
+    font-weight: normal;
+}
+
+img { vertical-align: middle; }
+
+thead tr { border: solid 1px; }
+.table-section { 
+    border-left: solid 1px;
+    border-right: solid 1px;
+}
+.table-section-top { border-top: solid 1px; }
+.table-section-bottom { border-bottom: solid 1px; }
+
+strong {
+    font-weight: bold;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    margin: 200px 0 100px 0;
+}
+
+footer {
+    height: 400px;
+}
