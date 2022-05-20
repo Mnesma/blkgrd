@@ -52,7 +52,6 @@ table {
 .inline-table {
     max-width: 700px;
     margin-top: 1rem;
-    margin-left: -90px;
 }
 th { 
     background-color: #FFF;
