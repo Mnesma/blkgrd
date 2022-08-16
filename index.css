@@ -62,6 +62,13 @@ th {
 td, th { 
     padding: 10px 20px;
 }
+thead tr th:first-child, 
+tbody tr td:first-child {
+    width: 108px;
+    min-width: 108px;
+    max-width: 108px;
+    word-break: break-all;
+}
 tbody tr:not(.table-section) { background-color: transparent; }
 tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.1); }
 td.icon-column { 
