@@ -64,9 +64,9 @@ td, th {
 }
 thead tr th:first-child, 
 tbody tr td:first-child {
-    width: 108px;
-    min-width: 108px;
-    max-width: 108px;
+    width: 113px;
+    min-width: 113px;
+    max-width: 113px;
     word-break: break-all;
 }
 tbody tr:not(.table-section) { background-color: transparent; }
