@@ -1,0 +1,17 @@
+.account-badge {
+  display: inline-block;
+  background-color: transparent;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: rgba(255, 255, 255, 0.65);
+  padding: 5px 15px;
+  border-radius: 999px;
+  transition: all 100ms ease-in-out;
+}
+
+.account-badge:hover {
+  background-color: rgba(0, 0, 0, 0.25);
+  color: rgba(255, 255, 255, 1);
+}

@@ -1,0 +1,11 @@
+{
+  "discord": {
+    "client": {
+      "id": "<client id>",
+      "secret": "<client secret>"
+    }
+  },
+  "cookie": {
+    "secret": "<cookie signing secret>"
+  }
+}

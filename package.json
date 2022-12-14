@@ -1,0 +1,62 @@
+{
+  "name": "blkgrd",
+  "version": "1.0.0",
+  "description": "The website for the Blackguard Maplestory guild",
+  "private": true,
+  "scripts": {
+    "start": "node ./src/backend/index.js",
+    "watch": "webpack watch --config ./src/frontend/webpack.dev.config.js",
+    "build:prod": "webpack --config ./src/frontend/webpack.prod.config.js",
+    "build:dev": "webpack --config ./src/frontend/webpack.dev.config.js",
+    "lint": "npm run eslint:frontend || npm run eslint:backend || npm run prettier",
+    "eslint:frontend": "eslint --config ./src/frontend/.eslintrc.json --max-warnings=0 ./src/frontend",
+    "eslint:backend": "eslint --config ./src/backend/.eslintrc.json --max-warnings=0 ./src/frontend",
+    "prettier": "prettier --write --ignore-unknown ./src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mnesma/blkgrd.git"
+  },
+  "author": "Mnesma",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mnesma/blkgrd/issues"
+  },
+  "homepage": "https://github.com/Mnesma/blkgrd#readme",
+  "devDependencies": {
+    "@babel/core": "7.18.9",
+    "@babel/preset-env": "7.18.9",
+    "babel-loader": "8.2.5",
+    "eslint": "8.18.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-react": "7.30.1",
+    "file-loader": "6.2.0",
+    "html-webpack-plugin": "5.5.0",
+    "husky": "8.0.1",
+    "lint-staged": "13.0.3",
+    "prettier": "2.7.1",
+    "webpack": "5.73.0",
+    "webpack-cli": "4.10.0"
+  },
+  "dependencies": {
+    "@babel/preset-react": "7.18.6",
+    "@fortawesome/fontawesome-svg-core": "6.1.1",
+    "@fortawesome/free-regular-svg-icons": "6.1.1",
+    "@fortawesome/free-solid-svg-icons": "6.1.1",
+    "@fortawesome/react-fontawesome": "0.2.0",
+    "cookie-parser": "1.4.6",
+    "css-loader": "6.7.1",
+    "express": "4.18.1",
+    "mini-css-extract-plugin": "2.6.1",
+    "node-fetch": "3.2.10",
+    "pouchdb": "7.3.0",
+    "pouchdb-upsert": "2.2.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router-dom": "6.3.0",
+    "recoil": "0.7.4",
+    "simple-oauth2": "4.3.0",
+    "uuid": "8.3.2",
+    "zod": "3.17.10"
+  }
+}
