@@ -1,0 +1,22 @@
+{
+  "name": "blkgrd",
+  "version": "1.0.0",
+  "description": "Repo for blkgrd.com",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./dev-server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mnesma/blkgrd.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mnesma/blkgrd/issues"
+  },
+  "homepage": "https://github.com/Mnesma/blkgrd#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
