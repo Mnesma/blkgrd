@@ -1,116 +1,66 @@
-body {
-    margin: 0;
-    background-color: rgb(36, 36, 46);
-}
-
 * {
-    font-size: 1.125rem;
-    color: #FFF;
-    font-family: "PT Serif";
-    font-weight: 400;
+  box-sizing: border-box;
 }
 
-.logo {
-    height: 100px;
-    width: auto;
+html,
+body {
+  height: 100%;
+  width: 100%;
 }
 
-main {
-    display: flex;
-    justify-content: center;
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #222222;
 }
 
-article { 
-    max-width: 700px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+#root {
+  position: relative;
 }
 
-h1, h2 {
-    position: relative;
-    font-family: Roboto;
-    font-weight: 300;
-    text-transform: uppercase;
-    margin: 3rem 0 1rem 0;
-}
-h1 { font-size: 2.5rem; }
-h2 { font-size: 1.75rem; }
-
-section {
-    max-width: 600px;
-    width: 100%;
+.player-boss-card {
+  position: absolute;
+  top: 115px;
+  left: 173px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    border-spacing: 0;
-    margin-bottom: 2rem;
-}
-.inline-table {
-    max-width: 700px;
-    margin-top: 1rem;
-}
-th { 
-    background-color: #FFF;
-    color: rgb(36, 36, 46);
-    font-weight: bold;
-    text-align: left;
-}
-td, th { 
-    padding: 10px 20px;
-}
-thead tr th:first-child, 
-tbody tr td:first-child {
-    width: 113px;
-    min-width: 113px;
-    max-width: 113px;
-    word-break: break-all;
-}
-tbody tr:not(.table-section) { background-color: transparent; }
-tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.1); }
-td.icon-column { 
-    text-align: center;
-    padding: 10px;
-}
-td:nth-child(4),
-th:nth-child(4),
-td:nth-child(3),
-th:nth-child(3),
-.total-row td { text-align: right; }
-
-.total-row td { font-weight: bold; }
-
-.total-row td:nth-child(2) { 
-    font-weight: normal;
+.player-button-container {
+  position: absolute;
+  top: 135px;
+  left: 24px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 3px;
 }
 
-img { vertical-align: middle; }
-
-thead tr { border: solid 1px; }
-.table-section { 
-    border-left: solid 1px;
-    border-right: solid 1px;
+.player-button {
+  all: unset;
+  width: 135px;
+  height: 30px;
+  cursor: pointer;
 }
-.table-section-top { border-top: solid 1px; }
-.table-section-bottom { border-bottom: solid 1px; }
-
-strong {
-    font-weight: bold;
+.player-button:hover {
+  background-position: 0 -30px;
 }
-
-header {
-    display: flex;
-    justify-content: center;
-    margin: 200px 0 100px 0;
+.player-button.active {
+  background-position: 0 -60px;
 }
 
-footer {
-    height: 400px;
+.gotofridge-button {
+  all: unset;
+  position: absolute;
+  bottom: 43px;
+  right: 35px;
+  cursor: pointer;
+  width: 141px;
+  height: 61px;
+  background-image: url("assets/guild-photo-2023/gotofridge_button.png");
 }
-
-.tierlist {
-    width: 900px;
+.gotofridge-button:hover {
+  background-position: 0 -61px;
+}
+.gotofridge-button:active {
+  background-position: 0 -122px;
 }
