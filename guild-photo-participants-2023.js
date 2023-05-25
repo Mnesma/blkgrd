@@ -3,5 +3,7 @@ export default [
   "calsuucake",
   "cronomance",
   "katsumileaf",
+  "millicent",
+  "relric",
   "slaintsigus"
 ]
