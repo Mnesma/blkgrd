@@ -4,7 +4,9 @@ const playerButtonTemplate = document.querySelector("#player-button-template").c
 const playerButtonContainer = document.querySelector(".player-button-container");
 const playerBossCard = document.querySelector(".player-boss-card");
 
-const allPlayerNames = new Set(guildPhotoParticipants);
+const alphabetically = (name1, name2) => name1.localeCompare(name2);
+
+const allPlayerNames = new Set(guildPhotoParticipants.sort(alphabetically));
 
 const playerButtons = new Map();
 
@@ -65,3 +67,4 @@ const main = () => {
 };
 
 main();
+
