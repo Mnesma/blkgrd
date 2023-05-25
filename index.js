@@ -1,14 +1,10 @@
+import guildPhotoParticipants from "./guild-photo-participants-2023.js";
+
 const playerButtonTemplate = document.querySelector("#player-button-template").children[0];
 const playerButtonContainer = document.querySelector(".player-button-container");
 const playerBossCard = document.querySelector(".player-boss-card");
 
-const allPlayerNames = new Set([
-  "bibanbo",
-  "calsuucake",
-  "cronomance",
-  "katsumileaf",
-  "slaintsigus"
-]);
+const allPlayerNames = new Set(guildPhotoParticipants);
 
 const playerButtons = new Map();
 
