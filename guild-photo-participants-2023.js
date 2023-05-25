@@ -1,9 +1,14 @@
 export default [
-  "bibanbo",
-  "calsuucake",
   "cronomance",
+  "calsuucake",
+  "bibanbo",
   "katsumileaf",
-  "millicent",
+  "slaintsigus",
   "relric",
-  "slaintsigus"
+  "millicent",
+  "blahsters",
+  "raonduty",
+  "shatterdust",
+  "snorb",
+  "syrenth"
 ]

@@ -18,12 +18,18 @@ body {
 
 #root {
   position: relative;
+  user-select: none;
+}
+
+.menu-background {
+  pointer-events: none;
 }
 
 .player-boss-card {
   position: absolute;
   top: 115px;
   left: 173px;
+  pointer-events: none;
 }
 
 .player-button-container {
