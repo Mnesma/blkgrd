@@ -10,5 +10,8 @@ export default [
   "raonduty",
   "shatterdust",
   "snorb",
-  "syrenth"
-]
+  "syrenth",
+  "grahnye",
+  "lotusluvcrow",
+  "eigenz"
+];

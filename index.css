@@ -23,13 +23,13 @@ body {
 
 .menu-background {
   pointer-events: none;
+  box-shadow: 0px 0px 30px rgb(0, 0, 0);
 }
 
 .player-boss-card {
   position: absolute;
   top: 115px;
   left: 173px;
-  pointer-events: none;
 }
 
 .player-button-container {
@@ -39,6 +39,36 @@ body {
   display: flex;
   flex-direction: column;
   row-gap: 3px;
+  height: 459px;
+  overflow: hidden;
+}
+
+.scroll-button {
+  all: unset;
+  position: absolute;
+  left: 24px;
+  height: 13px;
+  width: 135px;
+  cursor: pointer;
+}
+.scroll-button:hover {
+  background-position: 0 -13px;
+}
+.scroll-button:active {
+  background-position: 0 -26px;
+}
+.scroll-button:disabled {
+  cursor: default;
+  background-position: 0 -39px;
+}
+
+.scroll-button.up {
+  top: 118px;
+  background-image: url("assets/guild-photo-2023/scrollup_button.png");
+}
+.scroll-button.down {
+  top: 599px;
+  background-image: url("assets/guild-photo-2023/scrolldown_button.png");
 }
 
 .player-button {
@@ -46,6 +76,7 @@ body {
   width: 135px;
   height: 30px;
   cursor: pointer;
+  flex: 0 0 auto;
 }
 .player-button:hover {
   background-position: 0 -30px;
