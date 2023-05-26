@@ -3,6 +3,8 @@ import guildPhotoParticipants from "./guild-photo-participants-2023.js";
 const playerButtonTemplate = document.querySelector("#player-button-template").children[0];
 const playerButtonContainer = document.querySelector(".player-button-container");
 const playerBossCard = document.querySelector(".player-boss-card");
+const scrollUpButton = document.querySelector(".scroll-button.up");
+const scrollDownButton = document.querySelector(".scroll-button.down");
 
 const alphabetically = (name1, name2) => name1.localeCompare(name2);
 
@@ -53,7 +55,40 @@ const setSelectedPlayer = (playerName) => {
   setSelectedSearchParam(playerName);
 };
 
-const main = () => {
+const scrollDown = () => {
+  if (!scrollDownButton.disabled) {
+    playerButtonContainer.scrollBy(0, 33);
+    updateScrollButtonState();
+  }
+};
+
+const scrollUp = () => {
+  if (!scrollUpButton.disabled) {
+    playerButtonContainer.scrollBy(0, -33);
+    updateScrollButtonState();
+  }
+};
+
+const scrollInWheelDirection = (wheelEvent) => {
+  const { deltaY } = wheelEvent;
+
+  if (deltaY > 0) {
+    scrollDown();
+  } else if (deltaY < 0) {
+    scrollUp();
+  }
+};
+
+const updateScrollButtonState = () => {
+  const { clientHeight, scrollTop, scrollHeight } = playerButtonContainer;
+  const bottomScrollAmount = Math.max(scrollHeight - clientHeight, 0);
+  const atBottomOfContainer = scrollTop === bottomScrollAmount;
+  const atTopOfContainer = playerButtonContainer.scrollTop === 0;
+  scrollUpButton.disabled = atTopOfContainer;
+  scrollDownButton.disabled = atBottomOfContainer;
+};
+
+const startApp = () => {
   allPlayerNames.forEach((playerName) => {
     const newButton = playerButtonTemplate.cloneNode(true);
     newButton.style.setProperty("background-image", `url("assets/guild-photo-2023/${playerName}_button.png")`);
@@ -64,7 +99,12 @@ const main = () => {
   });
 
   setSelectedPlayer(state.selectedPlayerName);
+  playerButtons.get(state.selectedPlayerName).scrollIntoView();
+  updateScrollButtonState();
+
+  scrollDownButton.addEventListener("click", scrollDown);
+  scrollUpButton.addEventListener("click", scrollUp);
+  playerButtonContainer.addEventListener("wheel", scrollInWheelDirection);
 };
 
-main();
-
+window.addEventListener("load", startApp);
