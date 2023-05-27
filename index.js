@@ -1,5 +1,7 @@
 import guildPhotoParticipants from "./guild-photo-participants-2023.js";
 
+const loadingIndicator = document.querySelector(".loading-indicator");
+const root = document.querySelector("#root");
 const playerButtonTemplate = document.querySelector("#player-button-template").children[0];
 const playerButtonContainer = document.querySelector(".player-button-container");
 const playerBossCard = document.querySelector(".player-boss-card");
@@ -8,7 +10,7 @@ const scrollDownButton = document.querySelector(".scroll-button.down");
 
 const alphabetically = (name1, name2) => name1.localeCompare(name2);
 
-const allPlayerNames = new Set(guildPhotoParticipants.sort(alphabetically));
+const allPlayerNames = [...guildPhotoParticipants.sort(alphabetically)];
 
 const playerButtons = new Map();
 
@@ -18,7 +20,7 @@ const getSelectedPlayerNameFromURL = () => {
   if (searchParams.has("selected")) {
     const selectedPlayerName = searchParams.get("selected");
 
-    if (allPlayerNames.has(selectedPlayerName)) {
+    if (allPlayerNames.includes(selectedPlayerName)) {
       return selectedPlayerName;
     }
   }
@@ -26,10 +28,8 @@ const getSelectedPlayerNameFromURL = () => {
   return null;
 }
 
-const firstPlayerName = allPlayerNames.values().next().value;
-
 const state = {
-  selectedPlayerName: getSelectedPlayerNameFromURL() ?? firstPlayerName
+  selectedPlayerName: getSelectedPlayerNameFromURL() ?? allPlayerNames[0]
 };
 
 const setSelectedSearchParam = (playerName) => {
@@ -88,23 +88,103 @@ const updateScrollButtonState = () => {
   scrollDownButton.disabled = atBottomOfContainer;
 };
 
-const startApp = () => {
-  allPlayerNames.forEach((playerName) => {
-    const newButton = playerButtonTemplate.cloneNode(true);
-    newButton.style.setProperty("background-image", `url("assets/guild-photo-2023/${playerName}_button.png")`);
-    newButton.dataset.playerName = playerName;
-    newButton.addEventListener("click", updateCurrentPlayerCard);
-    playerButtonContainer.appendChild(newButton);
-    playerButtons.set(playerName, newButton);
+const selectPlayerInDirection = (direction) => {
+  const currentPlayerIndex = allPlayerNames.indexOf(state.selectedPlayerName);
+  const nextIndex = Math.min(Math.max(currentPlayerIndex + direction, 0), allPlayerNames.length - 1);
+
+  if (currentPlayerIndex !== nextIndex) {
+    const nextPlayer = allPlayerNames[nextIndex];
+    setSelectedPlayer(nextPlayer);
+    playerButtons.get(nextPlayer).scrollIntoView({ block: "nearest" });
+  }
+};
+
+const scrollWithArrowKeys = (keyboardEvent) => {
+  const { key } = keyboardEvent;
+
+  switch (key) {
+    case "ArrowUp": {
+      keyboardEvent.preventDefault();
+      selectPlayerInDirection(-1);
+      break;
+    }
+    case "ArrowDown": {
+      keyboardEvent.preventDefault();
+      selectPlayerInDirection(1);
+      break;
+    }
+  }
+};
+
+class ImageLoadHandler {
+  constructor(imageOwner, resolve, totalImages = 2) {
+    this.imageOwner = imageOwner;
+    this.resolve = resolve;
+    this.totalImages = totalImages;
+    this.loadedImagesCount = 0;
+
+    this.load = () => {
+      this.loadedImagesCount++;
+      if (this.loadedImagesCount === this.totalImages) {
+        this.resolve(this.imageOwner);
+      }
+    };
+  }
+}
+
+const loadImages = (urls, ownerName, resolve) => {
+  const loadHandler = new ImageLoadHandler(ownerName, resolve, urls.length);
+  urls.forEach((url) => {
+    const newImage = new Image();
+    newImage.addEventListener("load", loadHandler.load);
+    newImage.src = url;
   });
+};
 
-  setSelectedPlayer(state.selectedPlayerName);
-  playerButtons.get(state.selectedPlayerName).scrollIntoView();
-  updateScrollButtonState();
+const startApp = () => {
+  const imageRequests = Promise.all([
+    new Promise((resolve) => (
+      loadImages([
+        "assets/guild-photo-2023/background.png",
+        "assets/guild-photo-2023/gotofridge_button.png",
+        "assets/guild-photo-2023/scrollup_button.png",
+        "assets/guild-photo-2023/scrolldown_button.png"
+      ], null, resolve)
+    )),
+    ...allPlayerNames.map((playerName) => (
+      new Promise((resolve) => {
+        loadImages([
+          `assets/guild-photo-2023/${playerName}_card.png`,
+          `assets/guild-photo-2023/${playerName}_button.png`,
+        ], playerName, resolve);
+      })
+    ))
+  ]);
 
-  scrollDownButton.addEventListener("click", scrollDown);
-  scrollUpButton.addEventListener("click", scrollUp);
-  playerButtonContainer.addEventListener("wheel", scrollInWheelDirection);
+  imageRequests
+    .then(ownerNames => ownerNames.filter(name => name))
+    .then((playerNames) => {
+      playerNames.forEach((playerName) => {
+        const newButton = playerButtonTemplate.cloneNode(true);
+        newButton.style.setProperty("background-image", `url("assets/guild-photo-2023/${playerName}_button.png")`);
+        newButton.dataset.playerName = playerName;
+        newButton.addEventListener("click", updateCurrentPlayerCard);
+        playerButtonContainer.appendChild(newButton);
+        playerButtons.set(playerName, newButton);
+      });
+    })
+    .then(() => {
+      loadingIndicator.classList.add("hide");
+      root.classList.remove("hide");
+      setSelectedPlayer(state.selectedPlayerName);
+      playerButtons.get(state.selectedPlayerName).scrollIntoView();
+      updateScrollButtonState();
+    
+      scrollDownButton.addEventListener("click", scrollDown);
+      scrollUpButton.addEventListener("click", scrollUp);
+      playerButtonContainer.addEventListener("wheel", scrollInWheelDirection);
+      document.addEventListener("keydown", scrollWithArrowKeys);
+    });
 };
 
 window.addEventListener("load", startApp);

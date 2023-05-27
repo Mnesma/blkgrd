@@ -13,5 +13,9 @@ export default [
   "syrenth",
   "grahnye",
   "lotusluvcrow",
-  "eigenz"
+  "eigenz",
+  "chowd",
+  "faove",
+  "buildings",
+  "jasnake"
 ];
