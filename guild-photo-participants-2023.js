@@ -17,5 +17,10 @@ export default [
   "chowd",
   "faove",
   "buildings",
-  "jasnake"
+  "jasnake",
+  "zeroagency",
+  "abscondingly",
+  "rennyth",
+  "faovsux",
+  "bluespace123"
 ];
