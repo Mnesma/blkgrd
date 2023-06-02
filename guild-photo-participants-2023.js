@@ -22,5 +22,10 @@ export default [
   "abscondingly",
   "rennyth",
   "faovsux",
-  "bluespace123"
+  "bluespace123",
+  "blaedeworks",
+  "rckls",
+  "dorcha",
+  "vipernoxus",
+  "sirultra"
 ];
