@@ -142,13 +142,25 @@ const loadImages = (urls, ownerName, resolve) => {
 };
 
 const startApp = () => {
+  document.addEventListener("mousedown", () => {
+    document.body.classList.remove("cursor-mouse-up");
+    document.body.classList.add("cursor-mouse-down");
+  });
+  
+  document.addEventListener("mouseup", () => {
+    document.body.classList.add("cursor-mouse-up");
+    document.body.classList.remove("cursor-mouse-down");
+  });
+
   const imageRequests = Promise.all([
     new Promise((resolve) => (
       loadImages([
         "assets/guild-photo-2023/background.png",
         "assets/guild-photo-2023/gotofridge_button.png",
         "assets/guild-photo-2023/scrollup_button.png",
-        "assets/guild-photo-2023/scrolldown_button.png"
+        "assets/guild-photo-2023/scrolldown_button.png",
+        "assets/guild-photo-2023/cursor_down.png",
+        "assets/guild-photo-2023/cursor_hover.webp"
       ], null, resolve)
     )),
     ...allPlayerNames.map((playerName) => (

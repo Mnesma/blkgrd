@@ -16,6 +16,18 @@ body {
   background-color: #222222;
 }
 
+body.cursor-mouse-up {
+  cursor: url(assets/guild-photo-2023/cursor_up.png) 4 0, pointer;
+}
+
+body.cursor-mouse-up button:hover {
+  cursor: url(assets/guild-photo-2023/cursor_hover.webp) 4 0, pointer;
+}
+
+body.cursor-mouse-down {
+  cursor: url(assets/guild-photo-2023/cursor_down.png) 4 0, pointer;
+}
+
 #root {
   position: relative;
   user-select: none;
@@ -23,6 +35,19 @@ body {
 
 .hide {
   display: none;
+}
+
+.cursor-container {
+  pointer-events: none;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: solid 1px red;
+}
+.cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .loading-indicator {
@@ -65,7 +90,6 @@ body {
   left: 24px;
   height: 13px;
   width: 135px;
-  cursor: pointer;
 }
 .scroll-button:hover {
   background-position: 0 -13px;
@@ -74,7 +98,6 @@ body {
   background-position: 0 -26px;
 }
 .scroll-button:disabled {
-  cursor: default;
   background-position: 0 -39px;
 }
 
@@ -91,7 +114,6 @@ body {
   all: unset;
   width: 135px;
   height: 30px;
-  cursor: pointer;
   flex: 0 0 auto;
 }
 .player-button:hover {
@@ -106,7 +128,6 @@ body {
   position: absolute;
   bottom: 43px;
   right: 35px;
-  cursor: pointer;
   width: 141px;
   height: 61px;
   background-image: url("assets/guild-photo-2023/gotofridge_button.png");
