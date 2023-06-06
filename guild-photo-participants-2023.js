@@ -27,5 +27,10 @@ export default [
   "rckls",
   "dorcha",
   "vipernoxus",
-  "sirultra"
+  "sirultra",
+  "lumial",
+  "tonnerre",
+  "qyqqo",
+  "nico",
+  "eica"
 ];
