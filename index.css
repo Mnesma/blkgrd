@@ -14,23 +14,32 @@ body {
   justify-content: center;
   align-items: center;
   background-color: #222222;
+  overflow: hidden;
 }
 
 body.cursor-mouse-up {
-  cursor: url(assets/guild-photo-2023/cursor_up.png) 4 0, pointer;
+  cursor: url(assets/guild-photo-2023/cursor_up.png) 4 4, pointer;
 }
 
 body.cursor-mouse-up button:hover {
-  cursor: url(assets/guild-photo-2023/cursor_hover.webp) 4 0, pointer;
+  cursor: url(assets/guild-photo-2023/cursor_hover.webp) 4 4, pointer;
 }
 
 body.cursor-mouse-down {
-  cursor: url(assets/guild-photo-2023/cursor_down.png) 4 0, pointer;
+  cursor: url(assets/guild-photo-2023/cursor_down.png) 4 4, pointer;
 }
 
 #root {
   position: relative;
   user-select: none;
+}
+
+.particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .hide {
@@ -137,4 +146,63 @@ body.cursor-mouse-down {
 }
 .gotofridge-button:active {
   background-position: 0 -122px;
+}
+
+
+.blackguard-logo {
+  display: flex;
+  position: absolute;
+  top: 36px;
+  left: 26px;
+}
+
+.letter { 
+  background-image: url("assets/guild-photo-2023/blackguard_logo.png"); 
+  background-position: var(--x-position) 0;
+  background-repeat: no-repeat;
+  height: 24px;
+}
+.active {
+  background-position: var(--x-position) -26px;
+}
+
+#b {
+  --x-position: 0;
+  width: 13px;
+}
+#l {
+  --x-position: -14px;
+  width: 5px;
+}
+#a1 {
+  --x-position: -20px;
+  width: 12px;
+}
+#c {
+  --x-position: -33px;
+  width: 13px;
+}
+#k {
+  --x-position: -47px;
+  width: 11px;
+}
+#g {
+  --x-position: -59px;
+  width: 13px;
+}
+#u {
+  --x-position: -73px;
+  width: 13px;
+}
+#a2 {
+  --x-position: -87px;
+  width: 12px;
+}
+#r {
+  --x-position: -100px;
+  width: 8px;
+}
+#d {
+  --x-position: -109px;
+  width: 12px;
 }

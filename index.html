@@ -4,10 +4,29 @@
         <meta charset="utf-8">
         <title>Blackguard Guild Photo 2023</title>
         <link rel="stylesheet" type="text/css" href="./index.css">
+        <script src="particles.min.js"></script>
     </head>
     <body class="cursor-mouse-up">
+      <div class="particles-container">
+        <div class="particles" id="niolet-particles-container"></div>
+        <div class="particles" id="heartlet-particles-container"></div>
+        <div class="particles" id="gunlet-particles-container"></div>
+        <div class="particles" id="poglet-particles-container"></div>
+      </div>
       <div class="loading-indicator"></div>
       <div id="root" class="hide">
+        <div class="blackguard-logo">
+          <div id="b" class="letter"></div>
+          <div id="l" class="letter"></div>
+          <div id="a1" class="letter"></div>
+          <div id="c" class="letter"></div>
+          <div id="k" class="letter"></div>
+          <div id="g" class="letter"></div>
+          <div id="u" class="letter"></div>
+          <div id="a2" class="letter"></div>
+          <div id="r" class="letter"></div>
+          <div id="d" class="letter"></div>
+        </div>
         <img class="menu-background" src="assets/guild-photo-2023/background.png" alt="boss menu window" />
         <img class="player-boss-card" />
         <div class="player-button-container"></div>
@@ -15,7 +34,7 @@
         <button class="scroll-button down" type="button"></button>
         <button class="gotofridge-button" type="button"></button>
       </div>
-      <div id="templates">
+      <div id="templates" class="hide">
         <div id="player-button-template">
           <button class="player-button" type="button"></button>
         </div>
