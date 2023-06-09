@@ -32,5 +32,12 @@ export default [
   "tonnerre",
   "qyqqo",
   "nico",
-  "eica"
+  "eica",
+  "deckardk",
+  "ikicktoddler",
+  "missingzer0",
+  "mourning",
+  "mroibes",
+  "redsails",
+  "surf"
 ];

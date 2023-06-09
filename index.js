@@ -8,6 +8,23 @@ const playerBossCard = document.querySelector(".player-boss-card");
 const scrollUpButton = document.querySelector(".scroll-button.up");
 const scrollDownButton = document.querySelector(".scroll-button.down");
 
+const logoPieces = [
+  ["b", document.querySelector("#b")],
+  ["l", document.querySelector("#l")],
+  ["a", document.querySelector("#a1")],
+  ["c", document.querySelector("#c")],
+  ["k", document.querySelector("#k")],
+  ["g", document.querySelector("#g")],
+  ["u", document.querySelector("#u")],
+  ["a", document.querySelector("#a2")],
+  ["r", document.querySelector("#r")],
+  ["d", document.querySelector("#d")]
+];
+
+let logoProgress = "";
+
+let easterEggTriggered = false;
+
 const alphabetically = (name1, name2) => name1.localeCompare(name2);
 
 const allPlayerNames = [...guildPhotoParticipants.sort(alphabetically)];
@@ -26,7 +43,7 @@ const getSelectedPlayerNameFromURL = () => {
   }
 
   return null;
-}
+};
 
 const state = {
   selectedPlayerName: getSelectedPlayerNameFromURL() ?? allPlayerNames[0]
@@ -39,10 +56,91 @@ const setSelectedSearchParam = (playerName) => {
   history.replaceState(null, "", `${origin}${pathname}?${searchParams}`);
 };
 
+const UltraButtonStyle = {
+  SirUltra: "SirUltra",
+  Ultra: "Ultra"
+};
+
+const setUltraButtonStyle = (style) => {
+  const ultraButton = document.querySelector(".player-sirultra");
+
+  switch (style) {
+    case UltraButtonStyle.SirUltra: {
+      ultraButton.style.setProperty("background-image", "url(assets/guild-photo-2023/sirultra_button.png)");
+      ultraButton.dataset.playerName = "sirultra";
+      break;
+    }
+    case UltraButtonStyle.Ultra: {
+      ultraButton.style.setProperty("background-image", "url(assets/guild-photo-2023/ultra_button.png)");
+      ultraButton.dataset.playerName = "ultra";
+      break;
+    }
+  }
+}
+
+const getNextLetter = () => {
+  return logoPieces[Math.min(logoProgress.length, logoPieces.length - 1)];
+};
+
+const getCurrentLetter = () => {
+  return logoPieces[Math.max(logoProgress.length - 1, 0)];
+};
+
+const resetLetterElements = () => {
+  logoPieces.forEach(([_, element]) => {
+    element.classList.remove("active");
+  });
+};
+
+const playParticles = () => {
+  particlesJS.load("niolet-particles-container", "particles/niolet-particles.json");
+  particlesJS.load("poglet-particles-container", "particles/poglet-particles.json");
+  particlesJS.load("gunlet-particles-container", "particles/gunlet-particles.json");
+  particlesJS.load("heartlet-particles-container", "particles/heartlet-particles.json");
+  easterEggTriggered = true;
+};
+
+const processLetter = (letter) => {
+  if (easterEggTriggered) {
+    return;
+  }
+
+  const [nextLetter, letterElement] = getNextLetter();
+  const [currentLetter] = getCurrentLetter()
+
+  if (letter === nextLetter) {
+    letterElement.classList.add("active");
+    logoProgress += letter;
+
+    const [newNextLetter] = getNextLetter();
+    if (newNextLetter === "u") {
+      setUltraButtonStyle(UltraButtonStyle.Ultra);
+    } else {
+      setUltraButtonStyle(UltraButtonStyle.SirUltra);
+    }
+  } else if (letter !== currentLetter) {
+    resetLetterElements();
+    logoProgress = "";
+    setUltraButtonStyle(1);
+  }
+
+  if (logoProgress === "blackguard") {
+    playParticles();
+    resetLetterElements();
+  }
+};
+
 const updateCurrentPlayerCard = (event) => {
   const { target } = event;
   const { playerName } = target.dataset;
-  setSelectedPlayer(playerName);
+  // const firstLetter = playerName.substring(0, 1);
+  // processLetter(firstLetter);
+
+  if (playerName === "ultra") {
+    setSelectedPlayer("sirultra");
+  } else {
+    setSelectedPlayer(playerName);
+  }
 };
 
 const setSelectedPlayer = (playerName) => {
@@ -160,7 +258,9 @@ const startApp = () => {
         "assets/guild-photo-2023/scrollup_button.png",
         "assets/guild-photo-2023/scrolldown_button.png",
         "assets/guild-photo-2023/cursor_down.png",
-        "assets/guild-photo-2023/cursor_hover.webp"
+        "assets/guild-photo-2023/blackguard_logo.png",
+        "assets/guild-photo-2023/cursor_hover.webp",
+        "assets/guild-photo-2023/ultra_button.png"
       ], null, resolve)
     )),
     ...allPlayerNames.map((playerName) => (
@@ -179,6 +279,7 @@ const startApp = () => {
       playerNames.forEach((playerName) => {
         const newButton = playerButtonTemplate.cloneNode(true);
         newButton.style.setProperty("background-image", `url("assets/guild-photo-2023/${playerName}_button.png")`);
+        newButton.classList.add(`player-${playerName}`);
         newButton.dataset.playerName = playerName;
         newButton.addEventListener("click", updateCurrentPlayerCard);
         playerButtonContainer.appendChild(newButton);
