@@ -7,6 +7,8 @@ const playerButtonContainer = document.querySelector(".player-button-container")
 const playerBossCard = document.querySelector(".player-boss-card");
 const scrollUpButton = document.querySelector(".scroll-button.up");
 const scrollDownButton = document.querySelector(".scroll-button.down");
+const carriesButton = document.querySelector(".carries-button");
+const [mainParticleContainer, poutletParticlesContainer] = document.querySelectorAll(".particles-container");
 
 const logoPieces = [
   ["b", document.querySelector("#b")],
@@ -92,11 +94,35 @@ const resetLetterElements = () => {
   });
 };
 
+let poutletParticleHideTimeout = null;
+
+const showPoutletParticles = () => {
+  clearTimeout(poutletParticleHideTimeout);
+  mainParticleContainer.classList.add("hide-particles");
+  poutletParticlesContainer.classList.remove("hide-particles");
+
+  poutletParticleHideTimeout = setTimeout(() => {
+    mainParticleContainer.classList.remove("hide-particles");
+    poutletParticlesContainer.classList.add("hide-particles");
+  }, 3000);
+};
+
 const playParticles = () => {
   particlesJS.load("niolet-particles-container", "particles/niolet-particles.json");
   particlesJS.load("poglet-particles-container", "particles/poglet-particles.json");
   particlesJS.load("gunlet-particles-container", "particles/gunlet-particles.json");
   particlesJS.load("heartlet-particles-container", "particles/heartlet-particles.json");
+  particlesJS.load("starelet-particles-container", "particles/starelet-particles.json");
+  particlesJS.load("maplelet-particles-container", "particles/maplelet-particles.json");
+  particlesJS.load("sittingcomfortable-particles-container", "particles/sittingcomfortable-particles.json");
+  particlesJS.load("bedgelet-particles-container", "particles/bedgelet-particles.json");
+  particlesJS.load("brainlet-particles-container", "particles/brainlet-particles.json");
+  particlesJS.load("hehelet-particles-container", "particles/hehelet-particles.json");
+  particlesJS.load("hmmlet-particles-container", "particles/hmmlet-particles.json");
+  particlesJS.load("meeselet-particles-container", "particles/meeselet-particles.json");
+  particlesJS.load("niolets-particles-container", "particles/niolets-particles.json");
+  particlesJS.load("sciencelet-particles-container", "particles/sciencelet-particles.json");
+  particlesJS.load("poutlet-particles-container", "particles/poutlet-particles.json");
   easterEggTriggered = true;
 };
 
@@ -133,8 +159,8 @@ const processLetter = (letter) => {
 const updateCurrentPlayerCard = (event) => {
   const { target } = event;
   const { playerName } = target.dataset;
-  // const firstLetter = playerName.substring(0, 1);
-  // processLetter(firstLetter);
+  const firstLetter = playerName.substring(0, 1);
+  processLetter(firstLetter);
 
   if (playerName === "ultra") {
     setSelectedPlayer("sirultra");
@@ -194,6 +220,7 @@ const selectPlayerInDirection = (direction) => {
     const nextPlayer = allPlayerNames[nextIndex];
     setSelectedPlayer(nextPlayer);
     playerButtons.get(nextPlayer).scrollIntoView({ block: "nearest" });
+    updateScrollButtonState();
   }
 };
 
@@ -250,6 +277,8 @@ const startApp = () => {
     document.body.classList.remove("cursor-mouse-down");
   });
 
+  carriesButton.addEventListener("click", showPoutletParticles);
+
   const imageRequests = Promise.all([
     new Promise((resolve) => (
       loadImages([
@@ -260,7 +289,10 @@ const startApp = () => {
         "assets/guild-photo-2023/cursor_down.png",
         "assets/guild-photo-2023/blackguard_logo.png",
         "assets/guild-photo-2023/cursor_hover.webp",
-        "assets/guild-photo-2023/ultra_button.png"
+        "assets/guild-photo-2023/ultra_button.png",
+        "assets/guild-photo-2023/carries_button.png",
+        "assets/guild-photo-2023/discord_button.png",
+        "assets/guild-photo-2023/photos_button.png"
       ], null, resolve)
     )),
     ...allPlayerNames.map((playerName) => (
