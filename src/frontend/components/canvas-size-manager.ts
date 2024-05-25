@@ -1,0 +1,29 @@
+import { BASE_CANVAS_HEIGHT, CANVAS_MIN_WIDTH } from "../constants/sizes";
+import { App } from "./app";
+
+export class CanvasSizeManager {
+    static verticalScale = BASE_CANVAS_HEIGHT / CANVAS_MIN_WIDTH;
+
+    static start(): void {
+        document.body.style.setProperty("min-width", `${CANVAS_MIN_WIDTH}px`);
+
+        this.adjustCanvas();
+
+        window.addEventListener("resize", this.adjustCanvas);
+    }
+
+    static adjustCanvas = () => {
+        const { width } = document.body.getBoundingClientRect();
+        const newHorizontalScale = Math.max(width / CANVAS_MIN_WIDTH, 1);
+        const newWidth = Math.round(newHorizontalScale * CANVAS_MIN_WIDTH);
+        const newHeight = Math.round(newWidth * this.verticalScale);
+
+        document.body.style.setProperty("height", `${newHeight}px`);
+
+        App.rootContainer.scale = newHorizontalScale;
+
+        if (App.canvas.width !== newWidth || App.canvas.height !== newHeight) {
+            App.resize();
+        }
+    };
+}

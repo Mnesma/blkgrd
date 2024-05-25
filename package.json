@@ -1,22 +1,52 @@
 {
-  "name": "blkgrd",
-  "version": "1.0.0",
-  "description": "Repo for blkgrd.com",
-  "main": "index.js",
-  "scripts": {
-    "start": "node ./dev-server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Mnesma/blkgrd.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Mnesma/blkgrd/issues"
-  },
-  "homepage": "https://github.com/Mnesma/blkgrd#readme",
-  "dependencies": {
-    "express": "^4.18.2"
-  }
+    "name": "blkgrd",
+    "version": "1.0.0",
+    "description": "Repo for blkgrd.com",
+    "scripts": {
+        "start:app": "ts-node src/backend/app.ts",
+        "start:app:local": "cross-env HOST=localhost:8080 PORT=8080 PGPORT=5432 PGHOST=localhost PGUSER=postgres PGPASSWORD=postgres PGSSL=false npm run start:app",
+        "start:logger": "ts-node src/backend/logger.ts",
+        "start:logger:local": "cross-env PORT=8081 HOST=localhost USERNAME=redis PGPASSWORD=redis LEVEL=info LOG_TO_CONSOLE=true npm run start:logger",
+        "start:database": "ts-node src/backend/database.ts",
+        "start:database:local": "npm run start:database",
+        "build": "cross-env NODE_ENV=production rimraf ./build && webpack",
+        "watch": "cross-env NODE_ENV=development rimraf ./build && webpack --watch"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Mnesma/blkgrd.git"
+    },
+    "author": "Mnesma",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Mnesma/blkgrd/issues"
+    },
+    "homepage": "https://github.com/Mnesma/blkgrd#readme",
+    "devDependencies": {
+        "@types/matter-js": "0.19.6",
+        "@types/pg": "8.11.5",
+        "cross-env": "7.0.3",
+        "css-loader": "7.1.1",
+        "file-loader": "6.2.0",
+        "html-webpack-plugin": "5.6.0",
+        "mini-css-extract-plugin": "2.9.0",
+        "rimraf": "5.0.5",
+        "ts-loader": "9.5.1",
+        "webpack": "5.91.0",
+        "webpack-cli": "5.1.4"
+    },
+    "dependencies": {
+        "@fastify/static": "7.0.4",
+        "@pixi/picture": "4.0.1",
+        "fastify": "4.27.0",
+        "matter-js": "0.19.0",
+        "pg": "8.11.5",
+        "pixi.js": "8.1.1",
+        "redis": "4.6.13",
+        "short-uuid": "5.2.0",
+        "ts-node": "10.9.2",
+        "typescript": "5.4.5",
+        "winston": "3.13.0",
+        "ws": "8.17.0"
+    }
 }
