@@ -39,11 +39,28 @@ const config = {
                 use: [MiniCssExtractPlugin.loader, "css-loader"]
             },
             {
-                test: /\.(webp|png|ttf)$/i,
-                loader: "file-loader",
-                options: {
-                    name: "assets/[folder]/[name].[ext]",
-                    publicPath: "public"
+                test: /\.(ttf|webp|png)$/,
+                type: "asset/resource",
+                generator: {
+                    filename: (pathData) => {
+                        const pathSegments = pathData.filename.split("/");
+
+                        const assetsSegmentLocation = pathSegments.findIndex(
+                            segment => segment === "assets"
+                        );
+
+                        if (assetsSegmentLocation > -1) {
+                            const newFilename = pathSegments.slice(
+                                assetsSegmentLocation + 1
+                            ).join("/");
+                            return newFilename;
+                        }
+
+                        throw new Error(
+                            "not a valid asset because \"assets\" segment could not be found"
+                        );
+                    },
+                    publicPath: "public/"
                 }
             }
         ]

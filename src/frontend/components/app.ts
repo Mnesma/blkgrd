@@ -24,7 +24,10 @@ export class App {
         AbstractRenderer.defaultOptions.resolution = window.devicePixelRatio;
         BackgroundSystem.defaultOptions.backgroundAlpha = 0;
 
-        await this.pixiApp.init({ resizeTo: document.body });
+        await this.pixiApp.init({
+            resizeTo: document.body
+        });
+
         document.body.appendChild(this.canvas);
 
         this.pixiApp.stage.addChild(this.rootContainer);

@@ -6,12 +6,7 @@ import { Utilities } from "./shared/utilities";
 
 const [environment, error] = Utilities.getEnvironment({
     "PORT": Number,
-    "HOST": String,
-    "PGPORT": Number,
-    "PGHOST": String,
-    "PGUSER": String,
-    "PGPASSWORD": String,
-    "PGSSL": Boolean
+    "HOST": String
 });
 
 if (error) {

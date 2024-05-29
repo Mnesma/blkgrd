@@ -453,6 +453,48 @@ export const splashEffect = {
     splashEffect3
 };
 
+import sinkEffect0 from "./assets/guild-photo-2024/sink-effect/0.png";
+import sinkEffect1 from "./assets/guild-photo-2024/sink-effect/1.png";
+import sinkEffect2 from "./assets/guild-photo-2024/sink-effect/2.png";
+import sinkEffect3 from "./assets/guild-photo-2024/sink-effect/3.png";
+import sinkEffect4 from "./assets/guild-photo-2024/sink-effect/4.png";
+import sinkEffect5 from "./assets/guild-photo-2024/sink-effect/5.png";
+import sinkEffect6 from "./assets/guild-photo-2024/sink-effect/6.png";
+import sinkEffect7 from "./assets/guild-photo-2024/sink-effect/7.png";
+import sinkEffect8 from "./assets/guild-photo-2024/sink-effect/8.png";
+import sinkEffect9 from "./assets/guild-photo-2024/sink-effect/9.png";
+export const sinkEffect = {
+    sinkEffect0,
+    sinkEffect1,
+    sinkEffect2,
+    sinkEffect3,
+    sinkEffect4,
+    sinkEffect5,
+    sinkEffect6,
+    sinkEffect7,
+    sinkEffect8,
+    sinkEffect9
+};
+
+import surfaceEffect0 from "./assets/guild-photo-2024/surface-effect/0.png";
+import surfaceEffect1 from "./assets/guild-photo-2024/surface-effect/1.png";
+import surfaceEffect2 from "./assets/guild-photo-2024/surface-effect/2.png";
+import surfaceEffect3 from "./assets/guild-photo-2024/surface-effect/3.png";
+import surfaceEffect4 from "./assets/guild-photo-2024/surface-effect/4.png";
+import surfaceEffect5 from "./assets/guild-photo-2024/surface-effect/5.png";
+import surfaceEffect6 from "./assets/guild-photo-2024/surface-effect/6.png";
+import surfaceEffect7 from "./assets/guild-photo-2024/surface-effect/7.png";
+export const surfaceEffect = {
+    surfaceEffect0,
+    surfaceEffect1,
+    surfaceEffect2,
+    surfaceEffect3,
+    surfaceEffect4,
+    surfaceEffect5,
+    surfaceEffect6,
+    surfaceEffect7
+};
+
 import petalFallsBackground0 from "./assets/guild-photo-2024/character-backgrounds/petal-falls/0.png";
 import petalFallsBackground1 from "./assets/guild-photo-2024/character-backgrounds/petal-falls/1.png";
 import petalFallsBackground2 from "./assets/guild-photo-2024/character-backgrounds/petal-falls/2.png";
@@ -488,10 +530,10 @@ export const petalFallsBackground = {
     petalFallsBackground15
 };
 
-import mnesmaTubing0 from "./assets/guild-photo-2024/members/mnesma/tubing0.png";
-import mnesmaTubing1 from "./assets/guild-photo-2024/members/mnesma/tubing1.png";
-import mnesmaTubing2 from "./assets/guild-photo-2024/members/mnesma/tubing2.png";
-import mnesmaTubing3 from "./assets/guild-photo-2024/members/mnesma/tubing3.png";
+import mnesmaTubing0 from "./assets/guild-photo-2024/members/mnesma/tubing/0.png";
+import mnesmaTubing1 from "./assets/guild-photo-2024/members/mnesma/tubing/1.png";
+import mnesmaTubing2 from "./assets/guild-photo-2024/members/mnesma/tubing/2.png";
+import mnesmaTubing3 from "./assets/guild-photo-2024/members/mnesma/tubing/3.png";
 export const mnesmaTubing = {
     mnesmaTubing0,
     mnesmaTubing1,
@@ -499,10 +541,10 @@ export const mnesmaTubing = {
     mnesmaTubing3
 };
 
-import mnesmaSwimming0 from "./assets/guild-photo-2024/members/mnesma/swimming0.png";
-import mnesmaSwimming1 from "./assets/guild-photo-2024/members/mnesma/swimming1.png";
-import mnesmaSwimming2 from "./assets/guild-photo-2024/members/mnesma/swimming2.png";
-import mnesmaSwimming3 from "./assets/guild-photo-2024/members/mnesma/swimming3.png";
+import mnesmaSwimming0 from "./assets/guild-photo-2024/members/mnesma/swimming/0.png";
+import mnesmaSwimming1 from "./assets/guild-photo-2024/members/mnesma/swimming/1.png";
+import mnesmaSwimming2 from "./assets/guild-photo-2024/members/mnesma/swimming/2.png";
+import mnesmaSwimming3 from "./assets/guild-photo-2024/members/mnesma/swimming/3.png";
 export const mnesmaSwimming = {
     mnesmaSwimming0,
     mnesmaSwimming1,
@@ -510,13 +552,13 @@ export const mnesmaSwimming = {
     mnesmaSwimming3
 };
 
-import cakeTubing0 from "./assets/guild-photo-2024/members/cake/tubing0.png";
+import cakeTubing0 from "./assets/guild-photo-2024/members/cake/tubing/0.png";
 export const cakeTubing = {
     cakeTubing0
 };
 
-import cakeSwimming0 from "./assets/guild-photo-2024/members/cake/swimming0.png";
-import cakeSwimming1 from "./assets/guild-photo-2024/members/cake/swimming1.png";
+import cakeSwimming0 from "./assets/guild-photo-2024/members/cake/swimming/0.png";
+import cakeSwimming1 from "./assets/guild-photo-2024/members/cake/swimming/1.png";
 export const cakeSwimming = {
     cakeSwimming0,
     cakeSwimming1

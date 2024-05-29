@@ -1,7 +1,6 @@
 import { Bounds } from "matter-js";
 import { Container, Graphics, Rectangle } from "pixi.js";
 import type { ContainerChild, PointData } from "pixi.js";
-import { LookDirection } from "../enums/look-direction";
 import type { DebugOutlineOptions } from "../types/debug-outline-options";
 
 export class DebugOutline {
@@ -19,10 +18,6 @@ export class DebugOutline {
 
         this.#outlines.addChild(outline);
         this.root.addChild(this.#outlines);
-    }
-
-    look(direction: LookDirection) {
-        this.#outlines.scale.x = direction;
     }
 
     static pointDataToRectangle(pointData: PointData[]): Rectangle {

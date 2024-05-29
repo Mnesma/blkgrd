@@ -1,5 +1,4 @@
-import { Rectangle } from "pixi.js";
-import rubikFontUrl from "./assets/fonts/Rubik-Regular.ttf";
+import { Vector2 } from "./components/new/vector2";
 import { AssetKey } from "./enums/asset-key";
 import { BundleKey } from "./enums/bundle-key";
 import { TubeType } from "./enums/tube-type";
@@ -24,9 +23,11 @@ import {
     pool,
     poolWater,
     redTube,
+    sinkEffect,
     slideLeftBackground,
     slideRightBackground,
     splashEffect,
+    surfaceEffect,
     trayTube,
     tubeletTube,
     underWaterGodRay,
@@ -198,18 +199,23 @@ export const manifest: Manifest = {
                 }))
             },
             {
-                name: "rubik",
-                assets: [
-                    {
-                        alias: "rubik",
-                        src: rubikFontUrl
-                    }
-                ]
-            },
-            {
                 name: BundleKey.SplashEffect,
                 assets: Object.values(splashEffect).map((src, frame) => ({
                     alias: `${BundleKey.SplashEffect}${frame}`,
+                    src
+                }))
+            },
+            {
+                name: BundleKey.SinkEffect,
+                assets: Object.values(sinkEffect).map((src, frame) => ({
+                    alias: `${BundleKey.SinkEffect}${frame}`,
+                    src
+                }))
+            },
+            {
+                name: BundleKey.SurfaceEffect,
+                assets: Object.values(surfaceEffect).map((src, frame) => ({
+                    alias: `${BundleKey.SurfaceEffect}${frame}`,
                     src
                 }))
             },
@@ -308,6 +314,50 @@ export const manifest: Manifest = {
             [700, 840],
             [1100, 840]
         ],
+        tubes: {
+            [TubeType.Red]: {
+                name: TubeType.Red,
+                bundleKey: BundleKey.RedTube,
+                boundsOffset: new Vector2(0, -4),
+                boundsDimensions: new Vector2(88, 28),
+                mass: 2.464
+            },
+            [TubeType.Blue]: {
+                name: TubeType.Blue,
+                bundleKey: BundleKey.BlueTube,
+                boundsOffset: new Vector2(0, -4),
+                boundsDimensions: new Vector2(88, 28),
+                mass: 2.464
+            },
+            [TubeType.Tubelet]: {
+                name: TubeType.Tubelet,
+                bundleKey: BundleKey.TubeletTube,
+                boundsOffset: new Vector2(0, -4),
+                boundsDimensions: new Vector2(88, 28),
+                mass: 2.464
+            },
+            [TubeType.Floatlet]: {
+                name: TubeType.Floatlet,
+                bundleKey: BundleKey.FloatletTube,
+                boundsOffset: new Vector2(2, 18),
+                boundsDimensions: new Vector2(120, 31),
+                mass: 3.72
+            },
+            [TubeType.Tray]: {
+                name: TubeType.Tray,
+                bundleKey: BundleKey.TrayTube,
+                boundsOffset: new Vector2(0, 8),
+                boundsDimensions: new Vector2(155, 42),
+                mass: 6.51
+            },
+            [TubeType.Flamingo]: {
+                name: TubeType.Flamingo,
+                bundleKey: BundleKey.FlamingoTube,
+                boundsOffset: new Vector2(8, 24),
+                boundsDimensions: new Vector2(88, 28),
+                mass: 2.464
+            }
+        },
         guildMembers: [
             {
                 name: "Mnesma",
@@ -341,8 +391,46 @@ export const manifest: Manifest = {
                 },
                 swimmingBodySize: [46, 78],
                 tubeType: TubeType.Red
+            },
+            {
+                name: "Axis",
+                isZeroAlpha: true,
+                animations: {
+                    tubing: {
+                        name: BundleKey.MnesmaTubing,
+                        offset: [8, -33],
+                        backgroundOffset: [14, -34]
+                    },
+                    swimming: {
+                        name: BundleKey.MnesmaSwimming,
+                        offset: [10, -15],
+                        backgroundOffset: [14, 0]
+                    }
+                },
+                background: BundleKey.PetalFallsBackground,
+                swimmingBodySize: [44, 74],
+                tubeType: TubeType.Red
+            },
+            {
+                name: "Axis",
+                isZeroBeta: true,
+                animations: {
+                    tubing: {
+                        name: BundleKey.MnesmaTubing,
+                        offset: [8, -33],
+                        backgroundOffset: [14, -34]
+                    },
+                    swimming: {
+                        name: BundleKey.MnesmaSwimming,
+                        offset: [10, -15],
+                        backgroundOffset: [14, 0]
+                    }
+                },
+                background: BundleKey.PetalFallsBackground,
+                swimmingBodySize: [44, 74],
+                tubeType: TubeType.Blue
             }
         ]
     },
-    debugging: false
+    debugging: true
 };

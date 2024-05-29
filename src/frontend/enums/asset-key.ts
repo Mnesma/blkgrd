@@ -8,5 +8,6 @@ export enum AssetKey {
     UnderWaterForeground = "underWaterForeground",
     UnderWaterSand = "underWaterSand",
     UnderWaterGodRay0 = "underWaterGodRay0",
-    UnderWaterGodRay1 = "underWaterGodRay1"
+    UnderWaterGodRay1 = "underWaterGodRay1",
+    Rubik = "rubik"
 }

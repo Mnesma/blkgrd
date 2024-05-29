@@ -1,5 +1,6 @@
 * {
     box-sizing: border-box;
+    font-family: Rubik, sans-serif;
 }
 
 body {
@@ -19,4 +20,37 @@ canvas:nth-of-type(2) {
     width: 80%;
     left: 50%;
     transform: translateX(-50%);
+}
+
+body.cursor-mouse-up {
+    cursor: url(./assets/shared/maple-cursor/up.png) 4 4, pointer;
+}
+
+body.cursor-mouse-up.hover {
+    cursor: url(./assets/shared/maple-cursor/hover.webp) 4 4, pointer;
+}
+
+body.cursor-mouse-down {
+    cursor: url(./assets/shared/maple-cursor/down.png) 4 4, pointer;
+}
+
+.title-container {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.subtitle {
+    color: #333333;
+}
+
+.previous-year-button-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 50px 0 0 50px;
+    border: solid 1px;
+    height: 40px;
+    width: 100px;
 }

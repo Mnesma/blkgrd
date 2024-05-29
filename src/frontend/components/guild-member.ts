@@ -1,7 +1,8 @@
 import { Bodies, Body, Events } from "matter-js";
 import { AnimatedSprite, Container, Graphics, Text } from "pixi.js";
-import type { Bounds, PointData } from "pixi.js";
+import type { Bounds, PointData, Sprite } from "pixi.js";
 import { CANVAS_MIN_WIDTH } from "../constants/sizes";
+import { AssetKey } from "../enums/asset-key";
 import { BundleKey } from "../enums/bundle-key";
 import { CharacterState } from "../enums/character-state";
 import { Color } from "../enums/color";
@@ -10,11 +11,14 @@ import { RoomType } from "../enums/room-type";
 import { SpeedState } from "../enums/speed-state";
 import { TubeType } from "../enums/tube-type";
 import { Actor } from "../interfaces/actor";
+import { GuildMemberLike } from "../interfaces/guild-member-like";
 import { manifest } from "../manifest";
+import type { AssetDefinition } from "../types/asset-definition";
 import type {
     GuildMemberCharacterSprites,
     GuildMemberOptions
 } from "../types/guild-member-types";
+import { App } from "./app";
 import { BouncingEffect } from "./bouncing-effect";
 import { Bundles } from "./bundles";
 import { DebugOutline } from "./debug-outline";
@@ -25,7 +29,7 @@ import { SpeedEffect } from "./speed-effect";
 import { Tube } from "./tube";
 import { Utils } from "./utils";
 
-export class GuildMember extends EventTarget implements Actor {
+export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
     static padding = 8;
     static healthModifier = 2;
 
@@ -34,7 +38,8 @@ export class GuildMember extends EventTarget implements Actor {
     #background?: AnimatedSprite;
     #clickHitbox!: MemberClickHitbox;
     #splashSprite!: AnimatedSprite;
-    #health!: number;
+    #sinkSprite!: AnimatedSprite;
+    #surfaceSprite!: AnimatedSprite;
     #backgroundContainer = new Container();
     #characterContainer = new Container();
     #effectsContainer = new Container();
@@ -47,9 +52,13 @@ export class GuildMember extends EventTarget implements Actor {
     #bouncingEffect!: BouncingEffect;
     #speedEffect!: SpeedEffect;
     #animations: GuildMemberOptions["animations"];
+
+    #sprites = new Map<string, AnimatedSprite | Sprite>();
+
     name: string;
     body!: Body;
     root = new Container();
+    health!: number;
 
     constructor(
         {
@@ -65,6 +74,12 @@ export class GuildMember extends EventTarget implements Actor {
     ) {
         super();
         this.name = name;
+
+        this.#loadBackgroundSprite(background);
+        this.#loadSwimmingSprite(animations.swimming);
+        this.#loadTubingSprite(animations.tubing);
+        this.#loadTubeSprites(tubeType);
+
         this.#swimmingBodySize = swimmingBodySize;
         this.#animations = animations;
 
@@ -82,6 +97,8 @@ export class GuildMember extends EventTarget implements Actor {
         this.#createCharacterSprites();
         this.#createTube(tubeType);
         this.#createSplashSprite();
+        this.#createSinkSprite();
+        this.#createSurfaceSprite();
         this.#createClickHitbox();
         this.#createBody(x, y);
         this.#createNamePlate();
@@ -89,13 +106,55 @@ export class GuildMember extends EventTarget implements Actor {
         this.setState(initialState);
     }
 
+    #loadBackgroundSprite(background: GuildMemberOptions["background"]): void {
+        if (!background) {
+            return;
+        }
+
+        const backgroundSprite = new AnimatedSprite(Bundles.get(background));
+        backgroundSprite.anchor.set(0.5, 0.5);
+        backgroundSprite.animationSpeed = 0.35;
+
+        this.#sprites.set(
+            "background",
+            backgroundSprite
+        );
+    }
+
+    #loadSwimmingSprite(animation: AssetDefinition): void {
+        const swimming = new AnimatedSprite(Bundles.get(animation.name));
+
+        swimming.animationSpeed = 0.2;
+        swimming.anchor.set(0.5, 0.5);
+        swimming.position.set(...this.#animations.swimming.offset);
+
+        this.#sprites.set("swimming", swimming);
+    }
+
+    #loadTubingSprite(animation: AssetDefinition): void {
+        const tubing = new AnimatedSprite(Bundles.get(animation.name));
+
+        tubing.animationSpeed = 0.35;
+        tubing.anchor.set(0.5, 0.5);
+        tubing.position.set(...this.#animations.tubing.offset);
+
+        this.#sprites.set("tubing", tubing);
+    }
+
+    #loadTubeSprites(type: TubeType): void {
+        const tube = new Tube(type);
+        this.#sprites.set("tube", tube.root);
+    }
+
     setState(state: CharacterState): void {
         this.#characterContainer.removeChildren();
         this.#effectsContainer.removeChildren();
         this.#characterSprites.swimming.stop();
         this.#characterSprites.tubing.stop();
+        this.#surfaceSprite.stop();
         this.#tube.root.stop();
 
+        const previousState = this.#currentState;
         this.#currentState = state;
 
         const { max, min } = this.body.bounds;
@@ -111,6 +170,12 @@ export class GuildMember extends EventTarget implements Actor {
             case CharacterState.Swimming:
                 const { swimming } = this.#characterSprites;
                 this.#characterContainer.addChild(swimming);
+                this.#sinkSprite.alpha = 1;
+                this.#sinkSprite.position.set(
+                    this.root.position.x,
+                    this.root.position.y
+                );
+                this.#sinkSprite.gotoAndPlay(0);
                 swimming.play();
                 Body.scale(
                     this.body,
@@ -123,11 +188,17 @@ export class GuildMember extends EventTarget implements Actor {
                 this.#speedEffect.stop();
                 break;
             case CharacterState.Tubing:
-                this.#heal();
+                this.heal();
                 const { tubing } = this.#characterSprites;
                 this.#characterContainer.addChild(tubing);
                 this.#characterContainer.addChild(this.#tube.root);
                 this.#effectsContainer.addChild(this.#splashSprite);
+
+                if (previousState) {
+                    this.#effectsContainer.addChild(this.#surfaceSprite);
+                    this.#surfaceSprite.alpha = 1;
+                    this.#surfaceSprite.gotoAndPlay(0);
+                }
                 tubing.play();
                 this.#tube.root.play();
                 Body.scale(
@@ -143,7 +214,7 @@ export class GuildMember extends EventTarget implements Actor {
         }
 
         this.#clickHitbox.readjust();
-        this.#updateNamePlayeYOffset();
+        this.#updateNamePlateYOffset();
 
         if (manifest.debugging) {
             this.#drawDebuggingInfo();
@@ -162,19 +233,23 @@ export class GuildMember extends EventTarget implements Actor {
         this.#characterContainer.scale.x = direction;
         this.#backgroundContainer.scale.x = direction;
         this.#clickHitbox.root.scale.x = direction;
-        this.#debugOutlines.forEach((outline) => {
-            outline.look(direction);
-        });
+        // this.#debugOutlines.forEach((outline) => {
+        //     outline.look(direction);
+        // });
     }
 
     damage(): void {
-        this.#health--;
+        this.health--;
 
-        if (this.#health === 0) {
+        if (this.health === 0) {
             this.dispatchEvent(
                 new CustomEvent("changeroom", { detail: RoomType.BelowWater })
             );
         }
+    }
+
+    heal() {
+        this.health = 1; // Math.ceil(GuildMember.healthModifier * this.body.mass);
     }
 
     #createBackground(name: BundleKey): void {
@@ -227,11 +302,36 @@ export class GuildMember extends EventTarget implements Actor {
         this.#splashSprite.alpha = 0;
     }
 
+    #createSinkSprite() {
+        this.#sinkSprite = new AnimatedSprite(
+            Bundles.get(BundleKey.SinkEffect)
+        );
+        this.#sinkSprite.loop = false;
+        this.#sinkSprite.animationSpeed = 0.35;
+        this.#sinkSprite.anchor.set(0.5, 1);
+        this.#sinkSprite.onComplete = () => {
+            this.#sinkSprite.alpha = 0;
+        };
+        App.show(this.#sinkSprite);
+    }
+
+    #createSurfaceSprite() {
+        this.#surfaceSprite = new AnimatedSprite(
+            Bundles.get(BundleKey.SurfaceEffect)
+        );
+        this.#surfaceSprite.loop = false;
+        this.#surfaceSprite.animationSpeed = 0.4;
+        this.#surfaceSprite.anchor.set(0.5, 1);
+        this.#surfaceSprite.onComplete = () => {
+            this.#surfaceSprite.alpha = 0;
+        };
+    }
+
     #createNamePlate(): void {
         const name = new Text({
             text: this.name,
             style: {
-                fontFamily: "rubik",
+                fontFamily: AssetKey.Rubik,
                 fontSize: "14px",
                 fill: Color.White
             }
@@ -267,7 +367,7 @@ export class GuildMember extends EventTarget implements Actor {
         this.#namePlateContainer.addChild(namePlate);
     }
 
-    #updateNamePlayeYOffset() {
+    #updateNamePlateYOffset() {
         const arbitraryYOffset = 10;
         this.#namePlateContainer.position.y =
             (this.body.bounds.max.y - this.body.bounds.min.y) / 2
@@ -277,10 +377,6 @@ export class GuildMember extends EventTarget implements Actor {
     #createClickHitbox(): void {
         this.#clickHitbox = new MemberClickHitbox(this);
         this.#clickHitboxContainer.addChild(this.#clickHitbox.root);
-    }
-
-    #heal() {
-        this.#health = Math.ceil(GuildMember.healthModifier * this.body.mass);
     }
 
     #createBody(x: number, y: number): void {
@@ -310,7 +406,7 @@ export class GuildMember extends EventTarget implements Actor {
         const maxSpeed = 7;
         const slowSpeed = 3;
         const verySlowSpeed = 0.9;
-        const maxAmplitude = 4;
+        const maxAmplitude = 3;
         const minAmplitude = 1;
         const poolWidth = CANVAS_MIN_WIDTH;
 

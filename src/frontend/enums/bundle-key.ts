@@ -8,6 +8,8 @@ export enum BundleKey {
     UnderWaterGodRay = "underWaterGodRay",
     UnderWaterParticles = "underWaterParticles",
 
+    Fonts = "fonts",
+
     BlueTube = "blueTube",
     RedTube = "redTube",
     TubeletTube = "tubeletTube",
@@ -26,6 +28,8 @@ export enum BundleKey {
     FishSchool3 = "fishSchool3",
 
     SplashEffect = "splashEffect",
+    SinkEffect = "sinkEffect",
+    SurfaceEffect = "surfaceEffect",
 
     PetalFallsBackground = "petalFallsBackground",
 

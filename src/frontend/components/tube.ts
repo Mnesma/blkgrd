@@ -64,7 +64,7 @@ export class Tube {
                 return;
         }
 
-        this.root.anchor.set(0.5, 0.5);
+        this.root.anchor.set(0, 0.5);
         this.root.animationSpeed = 0.35;
     }
 }

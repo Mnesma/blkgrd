@@ -5,7 +5,13 @@ export class CanvasSizeManager {
     static verticalScale = BASE_CANVAS_HEIGHT / CANVAS_MIN_WIDTH;
 
     static start(): void {
-        document.body.style.setProperty("min-width", `${CANVAS_MIN_WIDTH}px`);
+        const canvasContainer = App.canvas.parentElement;
+
+        if (!canvasContainer) {
+            throw new Error("The canvas has not been put inside the document");
+        }
+
+        canvasContainer.style.setProperty("min-width", `${CANVAS_MIN_WIDTH}px`);
 
         this.adjustCanvas();
 
@@ -13,12 +19,18 @@ export class CanvasSizeManager {
     }
 
     static adjustCanvas = () => {
-        const { width } = document.body.getBoundingClientRect();
+        const canvasContainer = App.canvas.parentElement;
+
+        if (!canvasContainer) {
+            throw new Error("The canvas has not been put inside the document");
+        }
+
+        const { width } = canvasContainer.getBoundingClientRect();
         const newHorizontalScale = Math.max(width / CANVAS_MIN_WIDTH, 1);
         const newWidth = Math.round(newHorizontalScale * CANVAS_MIN_WIDTH);
         const newHeight = Math.round(newWidth * this.verticalScale);
 
-        document.body.style.setProperty("height", `${newHeight}px`);
+        canvasContainer.style.setProperty("height", `${newHeight}px`);
 
         App.rootContainer.scale = newHorizontalScale;
 
