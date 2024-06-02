@@ -15,7 +15,13 @@ if (error) {
 const fastify = Fastify();
 
 const staticFilesDir = path.resolve("build/frontend/public");
+const certbotFilesDir = path.resolve("build/frontend/public/.well-known");
 const indexFilePath = path.resolve("build/frontend/index.html");
+
+fastify.register(FastifyStatic, {
+    root: certbotFilesDir,
+    prefix: "/.well-known"
+});
 
 fastify.register(FastifyStatic, {
     root: staticFilesDir,
