@@ -693,13 +693,13 @@ export const bluespace123Swimming = {
     bluespace123Swimming1
 };
 
-import d3SpiritBombTubing0 from "./assets/guild-photo-2024/members/3Dspiritbomb/tubing/0.png";
+import d3SpiritBombTubing0 from "./assets/guild-photo-2024/members/3dspiritbomb/tubing/0.png";
 export const d3SpiritBombTubing = {
     d3SpiritBombTubing0
 };
 
-import d3SpiritBombSwimming0 from "./assets/guild-photo-2024/members/3Dspiritbomb/swimming/0.png";
-import d3SpiritBombSwimming1 from "./assets/guild-photo-2024/members/3Dspiritbomb/swimming/1.png";
+import d3SpiritBombSwimming0 from "./assets/guild-photo-2024/members/3dspiritbomb/swimming/0.png";
+import d3SpiritBombSwimming1 from "./assets/guild-photo-2024/members/3dspiritbomb/swimming/1.png";
 export const d3SpiritBombSwimming = {
     d3SpiritBombSwimming0,
     d3SpiritBombSwimming1
