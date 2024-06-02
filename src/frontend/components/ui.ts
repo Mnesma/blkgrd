@@ -30,8 +30,6 @@ export class Ui {
         titleContainer.appendChild(title);
         titleContainer.appendChild(subtitle);
 
-        titleContainer.addEventListener("click", console.log);
-
         return titleContainer;
     }
 }
