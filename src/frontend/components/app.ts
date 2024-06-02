@@ -67,15 +67,15 @@ export class App {
         this.gameLoop.add(this.tick);
         this.gameLoop.start();
 
-        const mouseConstraint = MouseConstraint.create(Physics.engine, {
-            constraint: {
-                render: {
-                    visible: false
-                }
-            }
-        });
-
         window.addMouseConstraint = () => {
+            const mouseConstraint = MouseConstraint.create(Physics.engine, {
+                constraint: {
+                    render: {
+                        visible: false
+                    }
+                }
+            });
+
             Composite.add(Physics.engine.world, mouseConstraint);
         };
 
