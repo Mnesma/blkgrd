@@ -4,7 +4,7 @@
     "description": "Repo for blkgrd.com",
     "scripts": {
         "start": "cross-env PORT=443 KEY=/etc/letsencrypt/live/blkgrd.com/privkey.pem CERT=/etc/letsencrypt/live/blkgrd.com/cert.pem ts-node src/backend/app.ts",
-        "start:local": "cross-env PORT=8080 npm start",
+        "start:local": "cross-env KEY= CERT= PORT=8080 ts-node src/backend/app.ts",
         "build": "cross-env NODE_ENV=production rimraf ./build && webpack",
         "watch": "cross-env NODE_ENV=development rimraf ./build && webpack --watch"
     },

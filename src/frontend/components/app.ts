@@ -1,4 +1,4 @@
-import type { Body } from "matter-js";
+import { type Body, Composite, MouseConstraint } from "matter-js";
 import {
     AbstractRenderer,
     Application,
@@ -13,6 +13,7 @@ import { Physics } from "./physics";
 declare global {
     interface Window {
         __PIXI_APP__: Application;
+        addMouseConstraint: () => void;
     }
 }
 
@@ -65,6 +66,18 @@ export class App {
         this.gameLoop.maxFPS = 60;
         this.gameLoop.add(this.tick);
         this.gameLoop.start();
+
+        const mouseConstraint = MouseConstraint.create(Physics.engine, {
+            constraint: {
+                render: {
+                    visible: false
+                }
+            }
+        });
+
+        window.addMouseConstraint = () => {
+            Composite.add(Physics.engine.world, mouseConstraint);
+        };
 
         setTimeout(() => {
             this.started = true;

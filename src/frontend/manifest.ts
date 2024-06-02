@@ -664,7 +664,12 @@ export const manifest: Manifest = {
                 },
                 bestSolo: BossName.HSeren,
                 swimmingBodySize: [35, 74],
-                tubeType: TubeType.Tray
+                tubeType: TubeType.Tray,
+                pet: {
+                    key: BundleKey.Reaper,
+                    swimmingOffset: [30, 0],
+                    tubingOffset: [20, -20]
+                }
             },
             {
                 name: "Prohibitum",
