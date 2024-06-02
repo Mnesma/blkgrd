@@ -3,12 +3,13 @@ import { Container, Rectangle } from "pixi.js";
 import { LookDirection } from "../enums/look-direction";
 import { GuildMember } from "./guild-member";
 
-export class MemberClickHitbox {
+export class MemberClickHitbox extends EventTarget {
     root = new Container();
 
     #member: GuildMember;
 
     constructor(member: GuildMember) {
+        super();
         this.#member = member;
         this.root.eventMode = "dynamic";
         this.root.on("mouseover", () => {
@@ -35,15 +36,23 @@ export class MemberClickHitbox {
             const { body } = member;
 
             Body.applyForce(
-                body,
-                body.position,
+                body.parent,
+                body.parent.position,
                 force
             );
 
             if (clickedOnRightSide) {
-                member.look(LookDirection.Right);
+                this.dispatchEvent(
+                    new CustomEvent("changelook", {
+                        detail: LookDirection.Right
+                    })
+                );
             } else {
-                member.look(LookDirection.Left);
+                this.dispatchEvent(
+                    new CustomEvent("changelook", {
+                        detail: LookDirection.Left
+                    })
+                );
             }
         });
     }

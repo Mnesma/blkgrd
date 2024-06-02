@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+
 * {
     box-sizing: border-box;
     font-family: Rubik, sans-serif;
@@ -34,23 +36,46 @@ body.cursor-mouse-down {
     cursor: url(./assets/shared/maple-cursor/down.png) 4 4, pointer;
 }
 
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1;}
+}
+
 .title-container {
+    animation: fadeIn 1s ease-in-out forwards;
     position: fixed;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
 }
 
-.subtitle {
-    color: #333333;
+.title {
+    letter-spacing: 7px;
+    font-size: 72px;
+    margin-bottom: 0;
+    line-height: 0.8;
+    margin-top: 200px;
+    text-shadow: 0 0 15px rgb(48 122 255 / 62%);
+    color: #122540;
+    position: relative;
 }
 
-.previous-year-button-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 50px 0 0 50px;
-    border: solid 1px;
-    height: 40px;
+.title::after {
+    content: "";
+    background: url("./assets/shared/logo/full-nico-version.png");
     width: 100px;
+    height: 108px;
+    position: absolute;
+    left: 50%;
+    transform: translatex(-50%);
+    bottom: 70px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.subtitle {
+    margin: 0 0 0 5px;
+    text-shadow: 0 0 10px rgb(118 167 255);
+    color: #122540;
+    font-size: 24px;
 }

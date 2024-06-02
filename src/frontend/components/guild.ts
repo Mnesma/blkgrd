@@ -1,15 +1,18 @@
 import { Body, Events, Vector } from "matter-js";
-import { Container } from "pixi.js";
+import { AnimatedSprite, Container } from "pixi.js";
 import { BASE_CANVAS_HEIGHT, CANVAS_MIN_WIDTH } from "../constants/sizes";
 import {
     POOL_WATER_START,
     UNDER_WATER_START
 } from "../constants/start-positions";
+import { BundleKey } from "../enums/bundle-key";
 import { CharacterState } from "../enums/character-state";
+import { LookDirection } from "../enums/look-direction";
 import { RoomType } from "../enums/room-type";
 import type { Actor } from "../interfaces/actor";
 import { GuildMemberLike } from "../interfaces/guild-member-like";
 import { manifest } from "../manifest";
+import { Bundles } from "./bundles";
 import { GuildMember } from "./guild-member";
 import { Physics } from "./physics";
 import { Utils } from "./utils";
@@ -21,13 +24,31 @@ export class Guild {
     static roster = new Map<string, GuildMemberLike>();
     static zeroRoster = new Map<
         string,
-        { alpha: GuildMember; beta?: GuildMember; }
+        { alpha?: GuildMember; beta?: GuildMember; }
     >();
     static bodyRoster = new Map<number, GuildMemberLike>();
 
     static loadMembers(): void {
-        manifest.details.guildMembers.forEach((member) => {
-            const [x, y] = this.getRandomStartingPosition(RoomType.AboveWater);
+        const rows = 5;
+        const columns = 13;
+        const columnSize = CANVAS_MIN_WIDTH / columns;
+        const rowSize = 200 / rows;
+        let currentRow = 0;
+        let currentColumn = 0;
+        manifest.details.guildMembers.sort(() => {
+            return Utils.randomInt(-1, 1);
+        }).forEach((member) => {
+            const offset = Utils.randomInt(0, 30);
+            const x = currentColumn++ * columnSize + offset;
+            const y = currentRow++ * rowSize + POOL_WATER_START + 44;
+
+            if (currentRow >= rows) {
+                currentRow = 0;
+            }
+
+            if (currentColumn >= columns) {
+                currentColumn = 0;
+            }
             const newMember = new GuildMember(
                 {
                     ...member,
@@ -37,35 +58,46 @@ export class Guild {
                 y
             );
 
-            if (member.isZeroAlpha) {
-                this.zeroRoster.set(member.name, {
-                    alpha: newMember
-                });
-                return;
+            if (member.pet) {
+                this.setPet(newMember, member.pet.key, member.pet.tubingOffset);
             }
 
-            if (member.isZeroBeta && this.zeroRoster.has(member.name)) {
-                const existingConfig = this.zeroRoster.get(member.name)!;
+            const isOnLeft = x < (CANVAS_MIN_WIDTH / 2);
 
+            if (isOnLeft && !member.isZeroAlpha && !member.isZeroBeta) {
+                newMember.look(LookDirection.Left); // this makes them look right
+                // no I'm not fixing it
+            }
+
+            if (member.isZeroAlpha) {
+                const existingConfig = this.zeroRoster.get(member.name) || {};
+                this.zeroRoster.set(member.name, {
+                    ...existingConfig,
+                    alpha: newMember
+                });
+            }
+
+            if (member.isZeroBeta) {
+                const existingConfig = this.zeroRoster.get(member.name) || {};
                 this.zeroRoster.set(member.name, {
                     ...existingConfig,
                     beta: newMember
                 });
-                this.recordNewZeroMember(member.name);
-                return;
             }
 
-            console.log(member.name, newMember.body.collisionFilter.group);
-            console.log(member.name, newMember.body.collisionFilter.mask);
-
-            this.recordNewMember(newMember);
+            const zero = this.zeroRoster.get(member.name);
+            if (!zero) {
+                this.recordNewMember(newMember);
+            } else if (zero.beta && zero.alpha) {
+                this.recordNewZeroMember(member.name);
+            }
         });
 
         Events.on(Physics.engine, "collisionStart", ({ pairs }) => {
             const { bodyA, bodyB } = pairs[0];
 
-            const guildMemeberA = this.bodyRoster.get(bodyA.id);
-            const guildMemeberB = this.bodyRoster.get(bodyB.id);
+            const guildMemeberA = this.bodyRoster.get(bodyA.parent.id);
+            const guildMemeberB = this.bodyRoster.get(bodyB.parent.id);
             const guildMembersCollided = guildMemeberA && guildMemeberB;
 
             if (guildMembersCollided) {
@@ -91,9 +123,13 @@ export class Guild {
         }
 
         const newZeroGuildMember = new ZeroGuildMember(
-            zeroConfig.alpha,
+            zeroConfig.alpha!,
             zeroConfig.beta
         );
+
+        if (zeroConfig.alpha!.startingX < (CANVAS_MIN_WIDTH / 2)) {
+            newZeroGuildMember.look(LookDirection.Left);
+        }
 
         this.recordNewMember(newZeroGuildMember);
     }
@@ -103,17 +139,24 @@ export class Guild {
             const roomType = (event as CustomEvent).detail;
 
             switch (roomType) {
-                case RoomType.AboveWater:
+                case RoomType.AboveWater: {
                     newMember.setState(CharacterState.Tubing);
                     Body.setPosition(
-                        newMember.body,
+                        newMember.body.parent,
                         {
-                            x: newMember.body.position.x,
+                            x: newMember.body.parent.position.x,
                             y: this.getRandomY(RoomType.AboveWater)
                         }
                     );
+                    const petPosition = newMember.pet?.tubingOffset;
+                    if (petPosition) {
+                        newMember.petContainer.children[0].position.set(
+                            ...petPosition
+                        );
+                    }
                     break;
-                case RoomType.BelowWater:
+                }
+                case RoomType.BelowWater: {
                     newMember.setState(CharacterState.Swimming);
                     const angle = 90 * (Math.PI / 180);
                     const force = Vector.rotate(
@@ -121,36 +164,47 @@ export class Guild {
                         angle
                     );
 
-                    newMember.body.collisionFilter.mask = 2;
-                    newMember.body.collisionFilter.group = 2;
-                    Body.setVelocity(newMember.body, Vector.create(0, 0));
-                    const originalAirFriction = newMember.body.frictionAir;
-                    Body.set(newMember.body, "frictionAir", 0.06);
+                    newMember.body.parent.collisionFilter.mask = 2;
+                    newMember.body.parent.collisionFilter.group = 2;
+                    Body.setVelocity(
+                        newMember.body.parent,
+                        Vector.create(0, 0)
+                    );
+                    const originalAirFriction =
+                        newMember.body.parent.frictionAir;
+                    Body.set(newMember.body.parent, "frictionAir", 0.06);
                     setTimeout(() => {
                         Body.applyForce(
-                            newMember.body,
-                            newMember.body.position,
+                            newMember.body.parent,
+                            newMember.body.parent.position,
                             force
                         );
                     });
                     setTimeout(() => {
                         Body.set(
-                            newMember.body,
+                            newMember.body.parent,
                             "frictionAir",
                             originalAirFriction
                         );
-                        newMember.body.collisionFilter.mask = -1;
-                        newMember.body.collisionFilter.group = 0;
+                        newMember.body.parent.collisionFilter.mask = -1;
+                        newMember.body.parent.collisionFilter.group = 0;
                     }, 1000);
+                    const petPosition = newMember.pet?.swimmingOffset;
+                    if (petPosition) {
+                        newMember.petContainer.children[0].position.set(
+                            ...petPosition
+                        );
+                    }
                     break;
+                }
             }
 
-            Body.setVelocity(newMember.body, { x: 0, y: 0 });
+            Body.setVelocity(newMember.body.parent, { x: 0, y: 0 });
         });
 
         this.roster.set(newMember.name, newMember);
         this.membersContainer.addChild(newMember.root);
-        this.bodyRoster.set(newMember.body.id, newMember);
+        this.bodyRoster.set(newMember.body.parent.id, newMember);
         this.members.push(newMember);
     }
 
@@ -171,25 +225,36 @@ export class Guild {
         }
     }
 
-    static getRandomStartingPosition(roomType: RoomType): [number, number] {
-        const topPadding = 44;
-        const bottomPadding = 78;
-
-        const waterStartY = POOL_WATER_START + topPadding;
-        const waterEndY = UNDER_WATER_START - bottomPadding;
-        const sandEndY = BASE_CANVAS_HEIGHT - 50 - bottomPadding;
-
-        switch (roomType) {
-            case RoomType.AboveWater:
-                return [
-                    Utils.randomInt(0, CANVAS_MIN_WIDTH),
-                    Utils.randomInt(waterStartY, waterEndY)
-                ];
-            case RoomType.BelowWater:
-                return [
-                    Utils.randomInt(0, CANVAS_MIN_WIDTH),
-                    Utils.randomInt(UNDER_WATER_START, sandEndY)
-                ];
+    static setPet(
+        member: GuildMemberLike,
+        petType: BundleKey,
+        offset: [number, number]
+    ): void {
+        switch (petType) {
+            case BundleKey.Reaper: {
+                const sprite = new AnimatedSprite(
+                    Bundles.get(BundleKey.Reaper)
+                );
+                sprite.animationSpeed = 0.35;
+                sprite.position.set(...offset);
+                sprite.anchor.set(0, 1);
+                sprite.play();
+                sprite.zIndex = -Infinity;
+                member.petContainer.addChild(sprite);
+                break;
+            }
+            case BundleKey.Monkey: {
+                const sprite = new AnimatedSprite(
+                    Bundles.get(BundleKey.Monkey)
+                );
+                sprite.animationSpeed = 0.35;
+                sprite.position.set(...offset);
+                sprite.anchor.set(0, 1);
+                sprite.play();
+                sprite.zIndex = -Infinity;
+                member.petContainer.addChild(sprite);
+                break;
+            }
         }
     }
 }

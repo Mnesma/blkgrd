@@ -1,6 +1,6 @@
 import { Bodies, Body, Events } from "matter-js";
 import { AnimatedSprite, Container, Graphics, Text } from "pixi.js";
-import type { Bounds, PointData, Sprite } from "pixi.js";
+import { Bounds, PointData, Sprite } from "pixi.js";
 import { CANVAS_MIN_WIDTH } from "../constants/sizes";
 import { AssetKey } from "../enums/asset-key";
 import { BundleKey } from "../enums/bundle-key";
@@ -31,7 +31,7 @@ import { Utils } from "./utils";
 
 export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
     static padding = 8;
-    static healthModifier = 2;
+    static healthModifier = 3;
 
     #tube!: Tube;
     #characterSprites!: GuildMemberCharacterSprites;
@@ -41,24 +41,29 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
     #sinkSprite!: AnimatedSprite;
     #surfaceSprite!: AnimatedSprite;
     #backgroundContainer = new Container();
-    #characterContainer = new Container();
     #effectsContainer = new Container();
-    #namePlateContainer = new Container();
     #clickHitboxContainer = new Container();
     #debugContainer = new Container();
     #debugOutlines: DebugOutline[] = [];
     #currentState!: CharacterState;
     #swimmingBodySize: [number, number];
     #bouncingEffect!: BouncingEffect;
-    #speedEffect!: SpeedEffect;
+    speedEffect!: SpeedEffect;
     #animations: GuildMemberOptions["animations"];
-
+    #namePlate = new Container();
     #sprites = new Map<string, AnimatedSprite | Sprite>();
+    bestSolo: GuildMemberOptions["bestSolo"];
 
     name: string;
     body!: Body;
     root = new Container();
     health!: number;
+    namePlateContainer = new Container();
+    characterContainer = new Container();
+    petContainer = new Container();
+    pet: GuildMemberOptions["pet"];
+    startingX: number;
+    startingY: number;
 
     constructor(
         {
@@ -67,13 +72,19 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
             animations,
             initialState,
             background,
-            swimmingBodySize
+            swimmingBodySize,
+            pet,
+            bestSolo
         }: GuildMemberOptions,
         x: number,
         y: number
     ) {
         super();
         this.name = name;
+        this.startingX = x;
+        this.startingY = y;
+        this.pet = pet;
+        this.bestSolo = bestSolo;
 
         this.#loadBackgroundSprite(background);
         this.#loadSwimmingSprite(animations.swimming);
@@ -84,9 +95,10 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
         this.#animations = animations;
 
         this.root.addChild(this.#backgroundContainer);
-        this.root.addChild(this.#characterContainer);
+        this.root.addChild(this.petContainer);
+        this.root.addChild(this.characterContainer);
         this.root.addChild(this.#effectsContainer);
-        this.root.addChild(this.#namePlateContainer);
+        this.root.addChild(this.namePlateContainer);
         this.root.addChild(this.#debugContainer);
         this.root.addChild(this.#clickHitboxContainer);
 
@@ -104,6 +116,7 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
         this.#createNamePlate();
 
         this.setState(initialState);
+        this.look(LookDirection.Right);
     }
 
     #loadBackgroundSprite(background: GuildMemberOptions["background"]): void {
@@ -126,7 +139,7 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
 
         swimming.animationSpeed = 0.2;
         swimming.anchor.set(0.5, 0.5);
-        swimming.position.set(...this.#animations.swimming.offset);
+        swimming.position.set(...animation.offset);
 
         this.#sprites.set("swimming", swimming);
     }
@@ -136,7 +149,7 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
 
         tubing.animationSpeed = 0.35;
         tubing.anchor.set(0.5, 0.5);
-        tubing.position.set(...this.#animations.tubing.offset);
+        tubing.position.set(...animation.offset);
 
         this.#sprites.set("tubing", tubing);
     }
@@ -147,7 +160,7 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
     }
 
     setState(state: CharacterState): void {
-        this.#characterContainer.removeChildren();
+        this.characterContainer.removeChildren();
         this.#effectsContainer.removeChildren();
         this.#characterSprites.swimming.stop();
         this.#characterSprites.tubing.stop();
@@ -169,12 +182,18 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
         switch (state) {
             case CharacterState.Swimming:
                 const { swimming } = this.#characterSprites;
-                this.#characterContainer.addChild(swimming);
-                this.#sinkSprite.alpha = 1;
+                this.characterContainer.addChild(swimming);
+                this.#sinkSprite.alpha = 0.8;
+                this.petContainer.alpha = 1;
+                this.#backgroundContainer.alpha = 1;
+                const position = this.root.position.y === 0
+                    ? this.root.parent.position
+                    : this.root.position;
                 this.#sinkSprite.position.set(
-                    this.root.position.x,
-                    this.root.position.y
+                    position.x,
+                    position.y + 25
                 );
+                this.#sinkSprite.zIndex = this.root.zIndex;
                 this.#sinkSprite.gotoAndPlay(0);
                 swimming.play();
                 Body.scale(
@@ -185,18 +204,19 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
                 Body.setMass(this.body, 5);
                 Body.setInertia(this.body, Infinity);
                 this.#bouncingEffect.stop();
-                this.#speedEffect.stop();
+                this.speedEffect.stop();
                 break;
             case CharacterState.Tubing:
                 this.heal();
                 const { tubing } = this.#characterSprites;
-                this.#characterContainer.addChild(tubing);
-                this.#characterContainer.addChild(this.#tube.root);
+                this.characterContainer.addChild(tubing);
+                this.characterContainer.addChild(this.#tube.root);
                 this.#effectsContainer.addChild(this.#splashSprite);
-
+                this.#backgroundContainer.alpha = 0;
+                this.petContainer.alpha = 0;
                 if (previousState) {
                     this.#effectsContainer.addChild(this.#surfaceSprite);
-                    this.#surfaceSprite.alpha = 1;
+                    this.#surfaceSprite.alpha = 0.8;
                     this.#surfaceSprite.gotoAndPlay(0);
                 }
                 tubing.play();
@@ -209,12 +229,12 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
                 Body.setInertia(this.body, Infinity);
                 Body.setMass(this.body, this.#tube.mass);
                 this.#bouncingEffect.start();
-                this.#speedEffect.start();
+                this.speedEffect.start();
                 break;
         }
 
         this.#clickHitbox.readjust();
-        this.#updateNamePlateYOffset();
+        this.#updateNamePlateOffset();
 
         if (manifest.debugging) {
             this.#drawDebuggingInfo();
@@ -226,19 +246,21 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
     }
 
     getCurrentCharacterBounds(): Bounds {
-        return this.#characterContainer.getLocalBounds();
+        return this.characterContainer.getLocalBounds();
     }
 
     look(direction: LookDirection): void {
-        this.#characterContainer.scale.x = direction;
+        this.characterContainer.scale.x = direction;
         this.#backgroundContainer.scale.x = direction;
         this.#clickHitbox.root.scale.x = direction;
-        // this.#debugOutlines.forEach((outline) => {
-        //     outline.look(direction);
-        // });
+        this.petContainer.scale.x = direction;
     }
 
     damage(): void {
+        if (!App.started) {
+            return;
+        }
+
         this.health--;
 
         if (this.health === 0) {
@@ -249,7 +271,7 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
     }
 
     heal() {
-        this.health = 1; // Math.ceil(GuildMember.healthModifier * this.body.mass);
+        this.health = Math.ceil(GuildMember.healthModifier * this.body.mass);
     }
 
     #createBackground(name: BundleKey): void {
@@ -322,6 +344,8 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
         this.#surfaceSprite.loop = false;
         this.#surfaceSprite.animationSpeed = 0.4;
         this.#surfaceSprite.anchor.set(0.5, 1);
+        this.#surfaceSprite.position.set(0, 25);
+        this.#surfaceSprite.scale.y = 0.75;
         this.#surfaceSprite.onComplete = () => {
             this.#surfaceSprite.alpha = 0;
         };
@@ -336,47 +360,54 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
                 fill: Color.White
             }
         });
+        name.position.set(19, 0);
+
+        const bossIcon = new Sprite(
+            Bundles.from(BundleKey.BossIcons)[this.bestSolo]
+        );
+        bossIcon.width = 16;
+        bossIcon.height = 16;
+        bossIcon.position.set(-GuildMember.padding + 5, 1);
 
         const { minX, maxX } = name.bounds;
         const textWidth = maxX - minX;
 
-        const arbitraryXOffset = 5;
         const x = -GuildMember.padding / 2;
         const y = 0;
-        const width = textWidth + GuildMember.padding;
-        const height = 16;
+        const width = textWidth + GuildMember.padding + 21;
+        const height = 18;
         const borderRadius = 3;
-        const center = width / 2;
 
         const background = new Graphics()
             .roundRect(x, y, width, height, borderRadius)
             .fill({ color: Color.Black, alpha: 0.5 });
 
-        const namePlate = new Container();
-        namePlate.addChild(background);
-        namePlate.addChild(name);
+        this.#namePlate.addChild(background);
+        this.#namePlate.addChild(name);
+        this.#namePlate.addChild(bossIcon);
+        this.#namePlate.pivot.set(width / 2, 0);
 
-        namePlate.position.set(
-            -center + arbitraryXOffset,
-            0
-        );
-
-        this.#namePlateContainer.boundsArea =
-            this.#clickHitboxContainer.boundsArea;
-
-        this.#namePlateContainer.addChild(namePlate);
+        this.namePlateContainer.addChild(this.#namePlate);
     }
 
-    #updateNamePlateYOffset() {
+    #updateNamePlateOffset(): void {
         const arbitraryYOffset = 10;
-        this.#namePlateContainer.position.y =
-            (this.body.bounds.max.y - this.body.bounds.min.y) / 2
+        this.namePlateContainer.position.y =
+            (this.body.parent.bounds.max.y - this.body.parent.bounds.min.y) / 2
             + arbitraryYOffset;
     }
 
     #createClickHitbox(): void {
         this.#clickHitbox = new MemberClickHitbox(this);
         this.#clickHitboxContainer.addChild(this.#clickHitbox.root);
+
+        this.#clickHitbox.addEventListener("changelook", (event) => {
+            const direction = (event as CustomEvent).detail;
+            this.look(direction);
+            this.dispatchEvent(
+                new CustomEvent("lookchanged", { detail: direction })
+            );
+        });
     }
 
     #createBody(x: number, y: number): void {
@@ -416,15 +447,16 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
 
             const yChange = calculator({ offset });
 
-            this.#characterContainer.position.y = yChange;
+            this.characterContainer.position.y = yChange;
+            this.#backgroundContainer.position.y = yChange;
             this.#effectsContainer.position.y = yChange;
         }, { speed: minBounceSpeed, amplitude: minAmplitude });
 
-        this.#speedEffect = new SpeedEffect((state, direction) => {
-            const { speed } = this.body;
+        this.speedEffect = new SpeedEffect((state, direction) => {
+            const { speed } = this.body.parent;
 
             if (speed > maxSpeed) {
-                Body.setSpeed(this.body, maxSpeed);
+                Body.setSpeed(this.body.parent, maxSpeed);
             }
 
             switch (state) {
@@ -437,7 +469,7 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
                     return;
                 }
                 case SpeedState.BasicallyStopped: {
-                    Body.setSpeed(this.body, 0);
+                    Body.setSpeed(this.body.parent, 0);
                     break;
                 }
                 case SpeedState.Fast: {
@@ -491,10 +523,10 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
 
             const { bodyA, bodyB } = pairs[0];
 
-            const { id } = this.body;
-            const obstacleId = Rooms.divider.body.id;
-            const collisionIncludesSelf = id === bodyB.id;
-            const collisionIncludesDivider = obstacleId === bodyA.id;
+            const { id } = this.body.parent;
+            const obstacleId = Rooms.divider.body.parent.id;
+            const collisionIncludesSelf = id === bodyB.parent.id;
+            const collisionIncludesDivider = obstacleId === bodyA.parent.id;
 
             const collidedWithDivider = collisionIncludesSelf
                 && collisionIncludesDivider;
@@ -510,13 +542,13 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
     }
 
     #getCurrentCharacter(): AnimatedSprite {
-        return this.#characterContainer.getChildAt(0);
+        return this.characterContainer.getChildAt(0);
     }
 
     #drawDebuggingInfo(): void {
         this.#debugContainer.removeChildren();
         this.#debugOutlines = [];
-        const { min, max } = this.body.bounds;
+        const { min, max } = this.body.parent.bounds;
         const bodyWidth = max.x - min.x;
         const bodyHeight = max.y - min.y;
         const bodyVertices = [
@@ -549,8 +581,8 @@ export class GuildMember extends EventTarget implements Actor, GuildMemberLike {
             { object: this.root },
             { object: this.#backgroundContainer, color: Color.Green },
             { object: this.#getCurrentCharacter() },
-            { object: this.#characterContainer, color: Color.Blue },
-            { object: this.#namePlateContainer },
+            { object: this.characterContainer, color: Color.Blue },
+            { object: this.namePlateContainer },
             { vertices: bodyVertices, color: Color.Red },
             { vertices: originVertices, color: Color.Red },
             { object: this.#clickHitbox.root, color: Color.Yellow }

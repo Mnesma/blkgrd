@@ -9,5 +9,22 @@ export enum AssetKey {
     UnderWaterSand = "underWaterSand",
     UnderWaterGodRay0 = "underWaterGodRay0",
     UnderWaterGodRay1 = "underWaterGodRay1",
-    Rubik = "rubik"
+    Rubik = "rubik",
+
+    CGloom = "cgloom",
+    CSlime = "cslime",
+    Ekaling = "ekaling",
+    HBlackMage = "hblackmage",
+    HDarknell = "hdarknell",
+    HLotus = "hlotus",
+    HLucid = "hlucid",
+    HSeren = "hseren",
+    NDarknell = "ndarknell",
+    NGloom = "ngloom",
+    NKalos = "nkalos",
+    NLucid = "nlucid",
+    NSlime = "nslime",
+    NVHilla = "nvhilla",
+    NWill = "nwill",
+    Urchin = "urchin"
 }

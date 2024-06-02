@@ -17,7 +17,8 @@ const config = {
             title: "Blackguard",
             favicon: "src/frontend/assets/favicon.ico",
             scriptLoading: "module",
-            filename: "../index.html"
+            filename: "../index.html",
+            template: "src/frontend/index.html"
         })
     ],
     module: {

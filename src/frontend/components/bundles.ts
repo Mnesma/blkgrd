@@ -21,6 +21,8 @@ export class Bundles {
                 Bundles.textures[key] = Bundles.asTextures(bundle);
             }
         }
+
+        document.querySelector(".loader")?.remove();
     }
 
     static asTextures(bundle: Bundle): Texture[] {

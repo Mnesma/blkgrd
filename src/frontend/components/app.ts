@@ -10,17 +10,26 @@ import type { ContainerChild } from "pixi.js";
 import type { Actor } from "../interfaces/actor";
 import { Physics } from "./physics";
 
+declare global {
+    interface Window {
+        __PIXI_APP__: Application;
+    }
+}
+
 export class App {
     static pixiApp = new Application();
     static rootContainer = new Container();
     static gameLoop = new Ticker();
     static actors: Actor[] = [];
+    static started = false;
 
     static get canvas() {
         return this.pixiApp.canvas;
     }
 
     static async init() {
+        window.__PIXI_APP__ = this.pixiApp;
+
         AbstractRenderer.defaultOptions.resolution = window.devicePixelRatio;
         BackgroundSystem.defaultOptions.backgroundAlpha = 0;
 
@@ -47,7 +56,7 @@ export class App {
         this.actors.push(...actors);
 
         actors.forEach(actor => {
-            Physics.add(actor.body);
+            Physics.add(actor.body.parent);
         });
     }
 
@@ -56,6 +65,10 @@ export class App {
         this.gameLoop.maxFPS = 60;
         this.gameLoop.add(this.tick);
         this.gameLoop.start();
+
+        setTimeout(() => {
+            this.started = true;
+        }, 3000);
     }
 
     static tick() {

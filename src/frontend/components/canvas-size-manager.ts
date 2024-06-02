@@ -1,4 +1,6 @@
+import { v8_0_0 } from "pixi.js";
 import { BASE_CANVAS_HEIGHT, CANVAS_MIN_WIDTH } from "../constants/sizes";
+import { UNDER_WATER_START } from "../constants/start-positions";
 import { App } from "./app";
 
 export class CanvasSizeManager {
@@ -16,6 +18,14 @@ export class CanvasSizeManager {
         this.adjustCanvas();
 
         window.addEventListener("resize", this.adjustCanvas);
+        window.scrollTo({
+            left: (document.body.clientWidth - window.innerWidth) / 2,
+            top: Math.max(
+                0,
+                UNDER_WATER_START * App.rootContainer.scale.x
+                    - window.innerHeight + 25
+            )
+        });
     }
 
     static adjustCanvas = () => {

@@ -4,6 +4,7 @@ import { SAND_START, UNDER_WATER_START } from "../constants/start-positions";
 import { MINUTE, SECOND } from "../constants/time";
 import { BundleKey } from "../enums/bundle-key";
 import { Aquarium } from "./aquarium";
+import { BouncingEffect } from "./bouncing-effect";
 import { Bundles } from "./bundles";
 import { StaticSprites } from "./static-sprites";
 import { Utils } from "./utils";
@@ -99,6 +100,35 @@ export class CanvasDecorations {
             startTime: MINUTE
         });
         container.addChild(foregroundFish.root);
+
+        const nioletScale = 0.7;
+        const nioletScaleCompensation = 1 + nioletScale + 0.1;
+        const nioletTopPadding = 300 * nioletScaleCompensation;
+        const niolet = new Aquarium({
+            minY: UNDER_WATER_START
+                + nioletTopPadding,
+            maxY: UNDER_WATER_START + SAND_START - 150,
+            fishTypes: [
+                BundleKey.Niolet1,
+                BundleKey.Niolet2,
+                BundleKey.Niolet3
+            ],
+            width: CANVAS_MIN_WIDTH * nioletScaleCompensation,
+            minSpawnTime: 0 * SECOND,
+            maxSpawnTime: 0 * SECOND,
+            startTime: MINUTE,
+            limit: 1
+        });
+        niolet.root.scale.set(nioletScale, nioletScale);
+        new BouncingEffect((calculator) => {
+            const { x } = niolet.root.position;
+            const offset = x / CANVAS_MIN_WIDTH;
+
+            const yChange = calculator({ offset });
+
+            niolet.root.position.y = yChange;
+        }, { speed: 1, amplitude: 8 });
+        container.addChild(niolet.root);
 
         container.addChild(StaticSprites.UnderWaterSand);
         container.addChild(StaticSprites.WaterEdges);

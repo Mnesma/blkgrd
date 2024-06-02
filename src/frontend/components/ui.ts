@@ -1,10 +1,6 @@
-import { manifest } from "../manifest";
-import { Guild } from "./guild";
-
 export class Ui {
     static init() {
         const title = this.createTitle();
-        const previousYearButton = this.createPreviousYearButton();
 
         document.addEventListener("mousedown", () => {
             document.body.classList.remove("cursor-mouse-up");
@@ -17,7 +13,6 @@ export class Ui {
         });
 
         document.body.appendChild(title);
-        document.body.appendChild(previousYearButton);
     }
 
     static createTitle(): HTMLElement {
@@ -38,14 +33,5 @@ export class Ui {
         titleContainer.addEventListener("click", console.log);
 
         return titleContainer;
-    }
-
-    static createPreviousYearButton(): HTMLElement {
-        const previousYearButtonContainer = document.createElement("div");
-        previousYearButtonContainer.classList.add(
-            "previous-year-button-container"
-        );
-
-        return previousYearButtonContainer;
     }
 }
