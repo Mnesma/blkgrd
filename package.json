@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "Repo for blkgrd.com",
     "scripts": {
-        "start": "ts-node src/backend/app.ts",
+        "start": "cross-env HOST=blkgrd.com PORT=80 ts-node src/backend/app.ts",
         "start:local": "cross-env HOST=localhost:8080 PORT=8080 npm start",
         "build": "cross-env NODE_ENV=production rimraf ./build && webpack",
         "watch": "cross-env NODE_ENV=development rimraf ./build && webpack --watch"
