@@ -5,8 +5,7 @@ import path from "node:path";
 import { Utilities } from "./shared/utilities";
 
 const [environment, error] = Utilities.getEnvironment({
-    "PORT": Number,
-    "HOST": String
+    "PORT": Number
 });
 
 if (error) {
@@ -20,10 +19,7 @@ const indexFilePath = path.resolve("build/frontend/index.html");
 
 fastify.register(FastifyStatic, {
     root: staticFilesDir,
-    prefix: "/public/",
-    constraints: {
-        host: new RegExp(`/.*\.${environment.HOST}`)
-    }
+    prefix: "/public/"
 });
 
 fastify.get("/", (_, response) => {
