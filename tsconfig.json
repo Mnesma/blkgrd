@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "target": "esnext",
+        "esModuleInterop": true
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "include": [
+        "src/shared/**/*.ts"
+    ]
+}
