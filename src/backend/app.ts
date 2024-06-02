@@ -5,14 +5,23 @@ import path from "node:path";
 import { Utilities } from "./shared/utilities";
 
 const [environment, error] = Utilities.getEnvironment({
-    "PORT": Number
+    "PORT": Number,
+    "KEY": String,
+    "CERT": String
 });
 
 if (error) {
     throw error;
 }
 
-const fastify = Fastify();
+const fastify = Fastify({
+    https: environment.KEY !== ""
+        ? {
+            key: fs.readFileSync(environment.KEY),
+            cert: fs.readFileSync(environment.CERT)
+        }
+        : null
+});
 
 const staticFilesDir = path.resolve("build/frontend/public");
 const certbotFilesDir = path.resolve("build/frontend/public/.well-known");
