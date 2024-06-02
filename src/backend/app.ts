@@ -22,7 +22,7 @@ fastify.register(FastifyStatic, {
     root: staticFilesDir,
     prefix: "/public/",
     constraints: {
-        host: environment.HOST
+        host: new RegExp(`/.*\.${environment.HOST}`)
     }
 });
 
@@ -33,7 +33,7 @@ fastify.get("/", (_, response) => {
 
 const main = async () => {
     try {
-        await fastify.listen({ port: environment.PORT });
+        await fastify.listen({ host: "0.0.0.0", port: environment.PORT });
         console.log(`blkgrd.com listening on port ${environment.PORT}`);
     } catch (error) {
         console.log(error);
