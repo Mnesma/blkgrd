@@ -15,11 +15,19 @@ if (error) {
 const fastify = Fastify();
 
 const staticFilesDir = path.resolve("build/frontend/public");
+const certbotFilesDir = path.resolve("build/frontend/public/.well-known");
 const indexFilePath = path.resolve("build/frontend/index.html");
 
 fastify.register(FastifyStatic, {
+    root: certbotFilesDir,
+    prefix: "/.well-known",
+    decorateReply: false
+});
+
+fastify.register(FastifyStatic, {
     root: staticFilesDir,
-    prefix: "/public/"
+    prefix: "/public/",
+    decorateReply: false
 });
 
 fastify.get("/", (_, response) => {
