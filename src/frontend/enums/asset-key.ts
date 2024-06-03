@@ -17,6 +17,7 @@ export enum AssetKey {
     HBlackMage = "hblackmage",
     HDarknell = "hdarknell",
     HLotus = "hlotus",
+    HWill = "hwill",
     HLucid = "hlucid",
     HSeren = "hseren",
     NDarknell = "ndarknell",

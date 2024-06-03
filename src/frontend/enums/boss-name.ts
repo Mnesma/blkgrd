@@ -6,6 +6,7 @@ export enum BossName {
     CSlime = "cslime",
     HDarknell = "hdarknell",
     CGloom = "cgloom",
+    HWill = "hwill",
     HLucid = "hlucid",
     NVHilla = "nvhilla",
     NDarknell = "ndarknell",

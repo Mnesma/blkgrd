@@ -1498,6 +1498,7 @@ import ekaling from "./assets/guild-photo-2024/boss-icons/ekaling.png";
 import hblackmage from "./assets/guild-photo-2024/boss-icons/hblackmage.png";
 import hdarknell from "./assets/guild-photo-2024/boss-icons/hdarknell.png";
 import hlotus from "./assets/guild-photo-2024/boss-icons/hlotus.png";
+import hwill from "./assets/guild-photo-2024/boss-icons/hwill.png";
 import hlucid from "./assets/guild-photo-2024/boss-icons/hlucid.png";
 import hseren from "./assets/guild-photo-2024/boss-icons/hseren.png";
 import ndarknell from "./assets/guild-photo-2024/boss-icons/ndarknell.png";
@@ -1516,6 +1517,7 @@ export const bossIcons = {
     hdarknell,
     hlotus,
     hlucid,
+    hwill,
     hseren,
     ndarknell,
     ngloom,

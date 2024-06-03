@@ -1196,7 +1196,7 @@ export const manifest: Manifest = {
                         offset: [20, -23]
                     }
                 },
-                bestSolo: BossName.Urchin,
+                bestSolo: BossName.HWill,
                 swimmingBodySize: [40, 74],
                 tubeType: TubeType.Blue
             },
