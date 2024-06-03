@@ -1,6 +1,8 @@
 const path = require("path");
+const process = require("process");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 
 const config = {
     entry: "./src/frontend/index.ts",
@@ -68,6 +70,23 @@ const config = {
     },
     resolve: {
         extensions: [".ts", ".js"]
+    },
+    optimization: {
+        minimizer: [
+            new ImageMinimizerPlugin({
+                minimizer: {
+                    implementation: ImageMinimizerPlugin.sharpMinify,
+                    options: {
+                        encodeOptions: {
+                            webp: {
+                                lossless: true
+                            },
+                            png: {}
+                        }
+                    }
+                }
+            })
+        ]
     }
 };
 
