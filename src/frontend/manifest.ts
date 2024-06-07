@@ -991,7 +991,7 @@ export const manifest: Manifest = {
                         offset: [-4, 0]
                     }
                 },
-                bestSolo: BossName.EKaling,
+                bestSolo: BossName.NKalos,
                 swimmingBodySize: [45, 74],
                 tubeType: TubeType.Tubelet
             },
